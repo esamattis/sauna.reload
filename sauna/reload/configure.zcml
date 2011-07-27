@@ -5,4 +5,10 @@
 
   <five:registerPackage package="." initialize=".initialize" />
 
+
+  <subscriber
+      for="zope.processlifetime.IProcessStarting"
+      handler=".events.startForkLoop"
+  />
+
 </configure>
