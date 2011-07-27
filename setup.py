@@ -33,7 +33,6 @@ setup(name='sauna.reload',
       ],
       entry_points="""
       # -*- Entry points: -*-
-
       [z3c.autoinclude.plugin]
       target = plone
       """,
