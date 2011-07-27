@@ -1,0 +1,25 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+    <include package="z3c.autoinclude" file="meta.zcml" />
+
+    <includePlugins
+        zcml:condition="not-have disable-autoinclude"
+        package="sauna.reload"
+        file="meta.zcml"
+        />
+
+    <includePlugins
+        zcml:condition="not-have disable-autoinclude"
+        package="sauna.reload"
+        file="configure.zcml"
+        />
+
+    <includePluginsOverrides
+        zcml:condition="not-have disable-autoinclude"
+        package="sauna.reload"
+        file="overrides.zcml"
+        />
+
+</configure>
