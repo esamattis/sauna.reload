@@ -1,8 +1,11 @@
+# Enable sauna.reload's Zope patches by:
+# [instance]
+# recipe = plone.recipe.zope2instance
+# zope-conf-additional = %import sauna.reload
 
-from reload import ForkLoop
+import sys
 
-def initialize(context):
-    """Initializer called when used as a Zope 2 product."""
+from sauna.reload.patchloader import PatchLoader
 
-
-
+# Hook into PEP 302 laoder
+__loader__ = PatchLoader(sys.modules[__name__])
