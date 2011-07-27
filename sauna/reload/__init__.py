@@ -5,7 +5,7 @@
 
 import sys
 
-from sauna.reload.patchloader import PatchLoader
+from sauna.reload.monkeypatcher import MonkeyPatchingLoader
 
 # Hook into PEP 302 laoder
-__loader__ = PatchLoader(sys.modules[__name__])
+__loader__ = MonkeyPatchingLoader(sys.modules[__name__])
