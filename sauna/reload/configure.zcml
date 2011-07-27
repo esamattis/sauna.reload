@@ -11,4 +11,10 @@
         permission="zope.Public"
         />
 
+
+  <subscriber
+      for="zope.processlifetime.IProcessStarting"
+      handler=".events.startForkLoop"
+  />
+
 </configure>

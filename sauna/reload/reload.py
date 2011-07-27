@@ -4,19 +4,18 @@ import os
 import signal
 import os
 import atexit
+import transaction
 
-import requests
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-
-
 
 
 class ForkLoop(FileSystemEventHandler):
 
     def __init__(self):
 
+        self.started = None
 
         # Create child on start
         self.fork = True
@@ -32,6 +31,9 @@ class ForkLoop(FileSystemEventHandler):
 
     def signalParent(self):
         """Ask parent to spawn new child"""
+
+        transaction.commit()
+
         print "Signaling parent with %s" % self.parent_pid
         os.kill(self.parent_pid, signal.SIGUSR1)
 
@@ -41,10 +43,14 @@ class ForkLoop(FileSystemEventHandler):
         signal.signal(signal.SIGUSR1, self.scheduleFork)
         self.startMonitor()
 
+        # TODO: Reset ZODB cache
+
         print "Fork loop started on process", os.getpid()
         while True:
 
             if self.fork:
+                from ZODB import Connection
+                Connection.resetCaches()
                 self.fork = False
                 self.child_pid = os.fork()
                 if self.child_pid == 0:
@@ -54,10 +60,17 @@ class ForkLoop(FileSystemEventHandler):
             time.sleep(1)
 
         print "New child starting!", os.getpid()
+        self.started = time.time()
 
         # Register exit listener. We cannot immediately spawn new child when we
         # get a modified event. Must wait that child has closed database etc.
         atexit.register(self.signalParent)
+
+
+        # TODO: Install development packages here
+
+    def print_boot_time(self):
+        print "Booting took %s seconds!" % (time.time() - self.started)
 
     def should_stop(self):
         """Stop modified monitor in children"""
@@ -95,8 +108,9 @@ class ForkLoop(FileSystemEventHandler):
         print "Change on %s" % event.src_path
         print "Kill child!"
         self.killed_child = True
-        os.kill(self.child_pid, signal.SIGTERM)
+        os.kill(self.child_pid, signal.SIGINT)
 
 
 
+forkloop = ForkLoop()
 
