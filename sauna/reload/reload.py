@@ -68,6 +68,9 @@ class ForkLoop(FileSystemEventHandler):
 
 
         # TODO: Install development packages here
+        # from Products.Five.zcml import load_config
+        # import sauna.reload
+        # load_config("autoinclude.zcml", sauna.reload)
 
     def print_boot_time(self):
         print "Booting took %s seconds!" % (time.time() - self.started)
