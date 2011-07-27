@@ -11,6 +11,8 @@
 
 import sys
 
+from sauna.reload.reload import forkloop
+
 from sauna.reload.monkeypatcher import MonkeyPatchingLoader
 
 # Hook into PEP 302 laoder
