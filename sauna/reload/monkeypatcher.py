@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+"""Module implementation loader with Zope monkey patching abilities"""
+
 import imp
 import os
 from pkgutil import ImpLoader

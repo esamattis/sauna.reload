@@ -2,6 +2,8 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:zcml="http://namespaces.zope.org/zcml">
 
+    <!-- Invoke z3c.autoinclude for deferred packages -->
+
     <include package="z3c.autoinclude" file="meta.zcml" />
 
     <includePlugins

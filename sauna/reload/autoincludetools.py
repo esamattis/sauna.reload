@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+"""Utilities for deferring installation of development eggs"""
+
 import os.path
 
 from pkg_resources import iter_entry_points
@@ -14,12 +17,14 @@ def defer_src_eggs():
 
 
 class IncludeDeferredView(BrowserView):
-
     def __call__(self):
         import sauna.reload
         load_config("autoinclude.zcml", sauna.reload)
 
 
+# In theory, we could also defer installing Five-products
+# by monkey patching Products.Five.fiveconfigure.findProducts:
+#
 # def findProducts():
 #     import Products
 #     from types import ModuleType
@@ -30,3 +35,8 @@ class IncludeDeferredView(BrowserView):
 #             if "src" not in getattr(product, "__file__").split(os.path.sep):
 #                 products.append(product)
 #     return products
+#
+# import Products.Five.fiveconfigure
+# setattr(Products.Five.fiveconfigure, "findProducts", findProducts)
+#
+# And then find and install (call initialize) deferred Five-products manually.
