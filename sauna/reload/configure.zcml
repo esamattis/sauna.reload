@@ -4,17 +4,16 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="sauna.reload.reload">
 
-    <browser:view
-        name="sauna-include-deferred"
-        for="Products.CMFCore.interfaces.ISiteRoot"
-        class=".autoincludetools.IncludeDeferredView"
-        permission="zope.Public"
-        />
-
-
   <subscriber
       for="zope.processlifetime.IProcessStarting"
       handler=".events.startForkLoop"
-  />
+      />
+
+  <browser:view
+      name="sauna-include-deferred"
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      class=".autoincludetools.IncludeDeferredView"
+      permission="zope.Public"
+      />
 
 </configure>
