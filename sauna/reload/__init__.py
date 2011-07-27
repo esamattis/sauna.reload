@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""sauna.reaload"""
+"""sauna.reload"""
 
 # Enable sauna.reload's Zope patches and deferrend z3c.autoinclude includes by
 # adding ``zope-conf-additional = %import sauna.reload`` into your buildout's
