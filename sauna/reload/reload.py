@@ -24,6 +24,18 @@ class ForkLoop(FileSystemEventHandler):
         self.child_pid = None
         self.killed_child = False
 
+        self.boot_started = None
+        self.boot_started = None
+        self.child_started = None
+
+
+    def startBootTimer(self):
+        if not self.boot_started:
+            self.boot_started = time.time()
+
+    def startChildBooTimer(self):
+        self.child_started = time.time()
+
 
     def scheduleFork(self, signum, frame):
         print "Parent got signal", os.getpid()
@@ -43,15 +55,14 @@ class ForkLoop(FileSystemEventHandler):
         signal.signal(signal.SIGUSR1, self.scheduleFork)
         self.startMonitor()
 
-        # TODO: Reset ZODB cache
+        # TODO: Rerset ZODB cache
 
-        print "Fork loop started on process", os.getpid()
+        print "Fork loop starting on process", os.getpid()
         while True:
 
             if self.fork:
-                from ZODB import Connection
-                Connection.resetCaches()
                 self.fork = False
+                self.startChildBooTimer()
                 self.child_pid = os.fork()
                 if self.child_pid == 0:
                     break
@@ -59,7 +70,7 @@ class ForkLoop(FileSystemEventHandler):
 
             time.sleep(1)
 
-        print "New child starting!", os.getpid()
+
         self.started = time.time()
 
         # Register exit listener. We cannot immediately spawn new child when we
@@ -67,13 +78,14 @@ class ForkLoop(FileSystemEventHandler):
         atexit.register(self.signalParent)
 
 
-        # TODO: Install development packages here
-        # from Products.Five.zcml import load_config
-        # import sauna.reload
-        # load_config("autoinclude.zcml", sauna.reload)
+        from Products.Five.zcml import load_config
+        import sauna.reload
+        load_config("autoinclude.zcml", sauna.reload)
 
-    def print_boot_time(self):
-        print "Booting took %s seconds!" % (time.time() - self.started)
+        print "Booted up new new child in %s seconds. Pid %s" % (
+            time.time() - self.child_started, os.getpid())
+
+
 
     def should_stop(self):
         """Stop modified monitor in children"""
@@ -89,7 +101,7 @@ class ForkLoop(FileSystemEventHandler):
         path = os.environ.get("reload_watch_dir", ".")
         observer = Observer()
         observer.schedule(self, path=path, recursive=True)
-        print "start observer on", path
+        print "Starting file monitor on", path
         observer.start()
 
 
