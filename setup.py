@@ -6,7 +6,7 @@ version = '1.0'
 setup(name='sauna.reload',
       version=version,
       description="",
-      long_description=open("README.txt").read() + "\n" +
+      long_description=open("README.markdown").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
@@ -14,10 +14,10 @@ setup(name='sauna.reload',
         "Framework :: Plone",
         "Programming Language :: Python",
         ],
-      keywords='',
-      author='',
-      author_email='',
-      url='http://svn.plone.org/svn/collective/',
+      keywords='plone reload zope2',
+      author='Esa-Matti Suuronen',
+      author_email='esa-matti@suuronen.org',
+      url='http://github.com/epeli/sauna.reload',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['sauna'],
@@ -25,10 +25,7 @@ setup(name='sauna.reload',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'plone.reload',
-          'plone.subrequest',
           'watchdog',
-          'requests',
           # -*- Extra requirements: -*-
       ],
       entry_points="""
