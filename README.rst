@@ -1,5 +1,5 @@
 
-.. image :: http://www.coactivate.org/projects/sauna-sprint-2010/project-home/image.jpeg
+.. figure :: http://www.coactivate.org/projects/sauna-sprint-2010/project-home/image.jpeg
 
 *sauna.reload: so that you can finish your Plone development today and relax in sauna after calling it a day*
 
