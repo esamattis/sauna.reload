@@ -76,4 +76,8 @@ Authors
 
 * Andreas Jung (approved in IRC)
 
+300 kg of beer was consumed to create this package (at least).
+Also several kilos of firewood, one axe, one chainsaw and one boat.
+
+
 
