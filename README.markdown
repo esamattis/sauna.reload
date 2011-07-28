@@ -16,10 +16,10 @@ It does following on Zope2 startup:
    stepping into a infinite loop
 4. It forks a new child and lets it pass the loop
 5. Installs all your development packages. This is fast!
-
-And now every time when the watcher thread detects a change in development
-files it will signal the child to shutdown and the child will signal the parent
-to fork new a child when it is just about to close itself.
+6. And now every time when the watcher thread detects a change in development
+   files it will signal the child to shutdown and the child will signal the parent
+   to fork new a child when it is just about to close itself.
+7. GOTO 4
 
 ## Installing
 
@@ -48,4 +48,6 @@ line and reload_watch_dir environment var to you instance part of buildout.cfg:
 
 Idea: Mikko Ohtamaa
 
+
+[plone.reload]: http://pypi.python.org/pypi/plone.reload
 
