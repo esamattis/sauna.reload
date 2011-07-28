@@ -38,7 +38,6 @@ line and reload_watch_dir environment var to you instance part of buildout.cfg:
 
 ## Known issues
 
-  * Caching issues with ZODB(?)
   * The watcher (watchdog) does not compile on OS X
   * Reloading is limited to autoincluded packages
 

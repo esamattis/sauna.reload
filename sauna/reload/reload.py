@@ -82,9 +82,43 @@ class ForkLoop(FileSystemEventHandler):
         import sauna.reload
         load_config("autoinclude.zcml", sauna.reload)
 
+        self.seekToEndOfDB()
+
+
         print "Booted up new new child in %s seconds. Pid %s" % (
             time.time() - self.child_started, os.getpid())
 
+
+    def seekToEndOfDB(self):
+
+        # TODO: is it really required to reopen Data.fs?
+
+        from Globals import DB
+        from ZODB.FileStorage.FileStorage import read_index
+        storage = DB.storage
+        storage._lock_acquire()
+        try:
+            storage._file.close()
+            storage._file = open(storage._file_name, 'r+b')
+            stop='\377'*8
+
+            index, tindex = storage._newIndexes()
+            index, start, ltid = storage._restore_index()
+            storage._initIndex(index, tindex)
+            storage._pos, storage._oid, tid = read_index(
+                storage._file, storage._file_name, index, tindex, stop,
+                ltid=ltid, start=start, read_only=False,
+                )
+        finally:
+            storage._lock_release()
+
+
+        # DB.invalidateCache()
+        # DB._connectionMap(lambda c: c.invalidateCache())
+        # DB.cacheFullSweep()
+        # DB.cacheMinimize()
+        # # long(os.path.getsize(DB.storage._file_name))
+        # DB.pack(time.time())
 
 
     def should_stop(self):
