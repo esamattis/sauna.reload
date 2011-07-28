@@ -1,4 +1,8 @@
 
+.. image :: http://www.coactivate.org/projects/sauna-sprint-2010/project-home/image.jpeg
+
+*sauna.reload: so that you can finish your Plone development today and relax in sauna after calling it a day*
+
 Introduction
 ---------------
 
@@ -37,12 +41,14 @@ line and reload_watch_dir environment var to you instance part of buildout.cfg:
 
 
 ::
+
     [instance]
     recipe = plone.recipe.zope2instance
     ...
     zope-conf-additional = %import sauna.reload
     environment-vars =
         reload_watch_dir ${buildout:directory}/src
+
 
 Starting Plone in reload mode
 --------------------------------
