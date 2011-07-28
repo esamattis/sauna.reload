@@ -11,14 +11,16 @@ reload the code, but restarts small part of Zope2.
 It does following on Zope2 startup:
 
 1. Defers loading of your development packages by hooking into PEP 302 loader
+   and changing their z3c.autoinclude target module
 2. Starts a watcher thread which monitors changes in your development py-files
 3. Stops loading of Zope2 in zope.processlifetime.IProcessStarting event by
    stepping into a infinite loop
 4. It forks a new child and lets it pass the loop
-5. Installs all your development packages. This is fast!
+5. Installs all your development packages invoking z3c.autoinclude. This is
+   fast!
 6. And now every time when the watcher thread detects a change in development
-   files it will signal the child to shutdown and the child will signal the parent
-   to fork new a child when it is just about to close itself.
+   files it will signal the child to shutdown and the child will signal
+   the parent to fork new a child when it is just about to close itself.
 7. GOTO 4
 
 ## Installing
@@ -38,7 +40,7 @@ line and reload_watch_dir environment var to you instance part of buildout.cfg:
 
   * Caching issues with ZODB(?)
   * The watcher (watchdog) does not compile on OS X
-
+  * Reloading is limited to autoincluded packages
 
 ## Authors
 
