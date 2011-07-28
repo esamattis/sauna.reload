@@ -21,10 +21,22 @@ And now every time when the watcher thread detects a change in development
 files it will signal the child to shutdown and the child will signal the parent
 to fork new a child when it is just about to close itself.
 
+## Installing
+
+Add this package to your buildout eggs and add following zope-conf-additional
+line and reload_watch_dir environment var to you instance part of buildout.cfg:
+
+    [instance]
+    recipe = plone.recipe.zope2instance
+    ...
+    zope-conf-additional = %import sauna.reload
+    environment-vars =
+        reload_watch_dir ${buildout:directory}/src
+
 
 ## Known issues
 
-  * Some caching issues with ZODB(?)
+  * Caching issues with ZODB(?)
   * The watcher (watchdog) does not compile on OS X
 
 
