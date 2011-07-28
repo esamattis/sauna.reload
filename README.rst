@@ -17,9 +17,9 @@ It does following on Zope2 startup:
 *  Defers loading of your development packages by hooking into PEP 302 loader
    and changing their z3c.autoinclude target module
 
-* Starts a watcher thread which monitors changes in your development py-files
+*  Starts a watcher thread which monitors changes in your development py-files
 
-* Stops loading of Zope2 in zope.processlifetime.IProcessStarting event by
+*  Stops loading of Zope2 in zope.processlifetime.IProcessStarting event by
    stepping into a infinite loop
 
 *  It forks a new child and lets it pass the loop
@@ -50,10 +50,6 @@ line and reload_watch_dir environment var to you instance part of buildout.cfg:
         reload_watch_dir ${buildout:directory}/src
 
 
-Starting Plone in reload mode
---------------------------------
-
-TODO
 
 Known issues
 ----------------
@@ -61,9 +57,25 @@ Known issues
 * Currently reloading is limited to z3c.autoincluded Python packages
   and does not cover old style Products.XXX namespaced packages
 
-* The watcher (watchdog) does not compile on OS X Lion 10.7
+* The watcher (watchdog) does not compile on OS X Lion 10.7. Snowleopard if fine.
 
 * If there is an start up error you'll get a loop of forever 
+
+
+TODOs
+-----
+
+* Make new instance script that starts plone with the fork loop. Normal fg should not start the fork loop.
+
+* Install dependencies of the development packages before the fork loop. Currently you can do this  manually by listing  them in your buildout.  There is some issues if you don't do it. Under investigation.
+
+* Figure out how to detect failed installation of packages in atexit of Zope2 to prevent infinitely spawning fork loop.
+
+* Test it!
+
+* Find out the limitations
+
+* Be able to reload oldschool packages too
 
 Authors
 ---------
