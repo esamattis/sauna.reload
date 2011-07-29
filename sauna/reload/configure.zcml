@@ -1,19 +1,9 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
-    xmlns:browser="http://namespaces.zope.org/browser"
-    i18n_domain="sauna.reload.reload">
+    xmlns="http://namespaces.zope.org/zope">
 
   <subscriber
       for="zope.processlifetime.IProcessStarting"
       handler=".events.startForkLoop"
-      />
-
-  <browser:view
-      name="sauna-include-deferred"
-      for="Products.CMFCore.interfaces.ISiteRoot"
-      class=".autoincludetools.IncludeDeferredView"
-      permission="zope.Public"
       />
 
 </configure>

@@ -69,6 +69,8 @@ TODOs
 
 * Install dependencies of the development packages before the fork loop. Currently you can do this  manually by listing  them in your buildout.  There is some issues if you don't do it. Under investigation.
 
+* Update *autoincludetools* and *fiveconfiguretools* to use *reload_watch_dir* env 
+
 * Figure out how to detect failed installation of packages in atexit of Zope2 to prevent infinitely spawning fork loop.
 
 * Test it!

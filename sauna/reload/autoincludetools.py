@@ -40,29 +40,3 @@ def get_deferred_deps():
     for key in deps:
         deps[key] = set([n for n in deps[key] if n not in deferred])
     return deps
-
-
-class IncludeDeferredView(BrowserView):
-    def __call__(self):
-        import sauna.reload
-        load_config("autoinclude.zcml", sauna.reload)
-
-
-# In theory, we could also defer installing Five-products
-# by monkey patching Products.Five.fiveconfigure.findProducts:
-#
-# def findProducts():
-#     import Products
-#     from types import ModuleType
-#     products = []
-#     for name in dir(Products):
-#         product = getattr(Products, name)
-#         if isinstance(product, ModuleType) and hasattr(product, "__file__"):
-#             if "src" not in getattr(product, "__file__").split(os.path.sep):
-#                 products.append(product)
-#     return products
-#
-# import Products.Five.fiveconfigure
-# setattr(Products.Five.fiveconfigure, "findProducts", findProducts)
-#
-# And then find and install (call initialize) deferred Five-products manually.
