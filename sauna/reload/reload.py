@@ -2,10 +2,11 @@
 import time
 import os
 import signal
-import os
 import atexit
 import transaction
 
+from persistent.TimeStamp import TimeStamp
+from ZODB.FileStorage.FileStorage import read_index
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -46,6 +47,9 @@ class ForkLoop(FileSystemEventHandler):
 
         transaction.commit()
 
+        from Globals import DB
+        DB.storage._save_index() # saves Data.fs.index
+
         print "Signaling parent with %s" % self.parent_pid
         os.kill(self.parent_pid, signal.SIGUSR1)
 
@@ -77,12 +81,23 @@ class ForkLoop(FileSystemEventHandler):
         # get a modified event. Must wait that child has closed database etc.
         atexit.register(self.signalParent)
 
+        from Globals import DB
+        index, start, ltid = DB.storage._restore_index() # loads Data.fs.index
+        # Sanity check. Last transaction in restored index must match
+        # the last transaction given by FileStorage transaction iterator.
+        if ltid == tuple(DB.storage.iterator())[-1].tid:
+            DB.storage._initIndex(index, {})
+            DB.storage._pos, DB.storage._oid, tid = read_index(
+                DB.storage._file, DB.storage._file_name, index, {},
+                stop=None, ltid=ltid, start=start, read_only=False)
+            DB.storage._ltid = tid
+            DB.storage._ts = tid = TimeStamp(tid)
 
         from Products.Five.zcml import load_config
         import sauna.reload
         load_config("autoinclude.zcml", sauna.reload)
 
-        self.seekToEndOfDB()
+        # self.seekToEndOfDB()
 
 
         print "Booted up new new child in %s seconds. Pid %s" % (
