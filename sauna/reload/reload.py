@@ -93,9 +93,23 @@ class ForkLoop(FileSystemEventHandler):
             DB.storage._ltid = tid
             DB.storage._ts = tid = TimeStamp(tid)
 
+
+        # import Products.Five.fiveconfigure
+        # from sauna.reload import fiveconfiguretools
+        # setattr(Products.Five.fiveconfigure, "findProducts",
+        #         fiveconfiguretools.findDeferredProducts)
+
         from Products.Five.zcml import load_config
         import sauna.reload
         load_config("autoinclude.zcml", sauna.reload)
+
+        # setattr(Products.Five.fiveconfigure, "findProducts",
+        #         fiveconfiguretools.findProducts)
+        # TODO: Find out why developed Five-products were not
+        # added into Products._packages_to_initialize.
+        # TODO: run install_package for every package added
+        # to Products._packages_to_initialize, which are not
+        # yet installed.
 
         # self.seekToEndOfDB()
 

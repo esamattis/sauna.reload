@@ -5,8 +5,7 @@ import imp
 import os
 from pkgutil import ImpLoader
 
-from sauna.reload.autoincludetools import defer_src_eggs
-
+from sauna.reload import fiveconfiguretools, autoincludetools
 
 class MonkeyPatchingLoader(ImpLoader):
     """Lucky for us ZConfig will use PEP 302 module hooks to load this file,
@@ -22,7 +21,12 @@ class MonkeyPatchingLoader(ImpLoader):
     def get_data(self, pathname):
         if os.path.split(pathname) == (self.filename, "component.xml"):
             # apply our patch and return dummy config to keep zope happy
-            # TODO: insert monkeypatch here
-            defer_src_eggs()
+            autoincludetools.defer_src_eggs()
+            # TODO: This prevents Five from loading packages under
+            # development leaving them for "sauna.reload" to configure.
+            # This should be enabled only, when Five support is completed.
+            # import Products.Five.fiveconfigure
+            # setattr(Products.Five.fiveconfigure, "findProducts",
+            #         fiveconfiguretools.findProducts)
             return u"<component></component>"
         return super(MonkeyPatchingLoader, self).get_data(self, pathname)
