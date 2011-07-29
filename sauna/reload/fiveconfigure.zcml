@@ -1,32 +1,11 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:five="http://namespaces.zope.org/five">
 
-    <!-- Invoke z3c.autoinclude for deferred packages -->
+    <include package="Products.Five" />
 
-    <!-- <include package="Products.Five" /> -->
-    <include package="z3c.autoinclude" file="meta.zcml" />
-
-    <!-- <five:loadProducts file="meta.zcml"/> -->
-    <includePlugins
-        zcml:condition="not-have disable-autoinclude"
-        package="sauna.reload"
-        file="meta.zcml"
-        />
-
-    <!-- <five:loadProducts /> -->
-    <includePlugins
-        zcml:condition="not-have disable-autoinclude"
-        package="sauna.reload"
-        file="configure.zcml"
-        />
-
-    <!-- <five:loadProductsOverrides /> -->
-    <includePluginsOverrides
-        zcml:condition="not-have disable-autoinclude"
-        package="sauna.reload"
-        file="overrides.zcml"
-        />
+    <five:loadProducts file="meta.zcml"/>
+    <five:loadProducts />
+    <five:loadProductsOverrides />
 
 </configure>
