@@ -25,8 +25,9 @@ setup(name='sauna.reload',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'watchdog',
+          'z3c.autoinclude',
           # -*- Extra requirements: -*-
+          'watchdog',
       ],
       entry_points="""
       # -*- Entry points: -*-
