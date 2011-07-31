@@ -57,7 +57,7 @@ Known issues
 * Currently reloading is limited to z3c.autoincluded Python packages
   and does not cover old style Products.XXX namespaced packages
 
-* The watcher (watchdog) does not compile on OS X Lion 10.7. Snowleopard if fine.
+* The watcher (watchdog) does not compile on OS X Lion 10.7. Snowleopard is fine.
 
 * If there is an start up error you'll get a loop of forever 
 
@@ -78,6 +78,8 @@ TODOs
 * Find out the limitations
 
 * Be able to reload oldschool packages too
+
+* Disable fork loop if debug mode is not on
 
 Authors
 ---------
