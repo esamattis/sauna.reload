@@ -1,17 +1,49 @@
 # -*- coding: utf-8 -*-
-"""Utilities for deferring installation of development eggs"""
+# Copyright (c) 2011 University of Jyväskylä
+#
+# Authors:
+#     Esa-Matti Suuronen <esa-matti@suuronen.org>
+#     Asko Soukka <asko.soukka@iki.fi>
+#
+# This file is part of sauna.reload.
+#
+# sauna.reload is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# sauna.reload is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path
+"""Utilities for deferring loading of developed eggs"""
+
+from os import environ
+
+from pkg_resources import iter_entry_points
 
 
 def findProducts():
     import Products
     from types import ModuleType
     products = []
+    reload_watch_dir = environ.get("reload_watch_dir", u"")  # all by default
+    deferred = [ep.dist.project_name
+                for ep in iter_entry_points("z3c.autoinclude.plugin")
+                if ep.module_name == "sauna.reload"]
     for name in dir(Products):
         product = getattr(Products, name)
         if isinstance(product, ModuleType) and hasattr(product, "__file__"):
-            if "src" not in getattr(product, "__file__").split(os.path.sep):
+            # Do not *find* old-style products, which are under the
+            # reload_watch_dir.
+            # XXX: Because ``sauna.reload`` doesn't have full Five-support yet,
+            # we select (or deselect) only those, which support autoinclude.
+            if not getattr(product, "__file__").startswith(reload_watch_dir)\
+                and product.__name__ not in deferred:
                 products.append(product)
     return products
 
@@ -20,9 +52,16 @@ def findDeferredProducts():
     import Products
     from types import ModuleType
     products = []
+    reload_watch_dir = environ.get("reload_watch_dir", u"")  # all by default
+    deferred = [ep.dist.project_name
+                for ep in iter_entry_points("z3c.autoinclude.plugin")
+                if ep.module_name == "sauna.reload"]
     for name in dir(Products):
         product = getattr(Products, name)
         if isinstance(product, ModuleType) and hasattr(product, "__file__"):
-            if "src" in getattr(product, "__file__").split(os.path.sep):
+            # *Find* only those old-style products, which are under the
+            # reload_watch_dir.
+            if getattr(product, "__file__").startswith(reload_watch_dir)\
+                and product.__name__ in deferred:
                 products.append(product)
     return products

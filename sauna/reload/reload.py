@@ -1,3 +1,24 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2011 University of Jyväskylä
+#
+# Authors:
+#     Esa-Matti Suuronen <esa-matti@suuronen.org>
+#     Asko Soukka <asko.soukka@iki.fi>
+#
+# This file is part of sauna.reload.
+#
+# sauna.reload is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# sauna.reload is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
 import os
@@ -47,8 +68,12 @@ class ForkLoop(FileSystemEventHandler):
 
         transaction.commit()
 
+        # Save ``Data.fs.index`` before dying to notify the next child of the
+        # peristent changes
         from Globals import DB
-        DB.storage._save_index() # saves Data.fs.index
+        DB.storage._save_index()
+        # TODO: The code aboce should be abstracted with ZCA to make
+        # ``sauna.reload`` to be able to support also other storages than ZODB.
 
         print "Signaling parent with %s" % self.parent_pid
         os.kill(self.parent_pid, signal.SIGUSR1)
@@ -59,7 +84,7 @@ class ForkLoop(FileSystemEventHandler):
         signal.signal(signal.SIGUSR1, self.scheduleFork)
         self.startMonitor()
 
-        # TODO: Rerset ZODB cache
+        # TODO: Reset ZODB cache
 
         print "Fork loop starting on process", os.getpid()
         while True:
@@ -81,8 +106,10 @@ class ForkLoop(FileSystemEventHandler):
         # get a modified event. Must wait that child has closed database etc.
         atexit.register(self.signalParent)
 
+        # Load saved ``Data.fs.index`` to see the persistent changes created by
+        # the previous child.
         from Globals import DB
-        index, start, ltid = DB.storage._restore_index() # loads Data.fs.index
+        index, start, ltid = DB.storage._restore_index()
         # Sanity check. Last transaction in restored index must match
         # the last transaction given by FileStorage transaction iterator.
         if ltid == tuple(DB.storage.iterator())[-1].tid:
@@ -92,7 +119,8 @@ class ForkLoop(FileSystemEventHandler):
                 stop=None, ltid=ltid, start=start, read_only=False)
             DB.storage._ltid = tid
             DB.storage._ts = tid = TimeStamp(tid)
-
+        # TODO: The code aboce should be abstracted with ZCA to make
+        # ``sauna.reload`` to be able to support also other storages than ZODB.
 
         # import Products.Five.fiveconfigure
         # from sauna.reload import fiveconfiguretools
@@ -111,8 +139,8 @@ class ForkLoop(FileSystemEventHandler):
         # to Products._packages_to_initialize, which are not
         # yet installed.
 
-        # self.seekToEndOfDB()
 
+        # self.seekToEndOfDB()  # old way to force refresh of FileStorage index
 
         print "Booted up new new child in %s seconds. Pid %s" % (
             time.time() - self.child_started, os.getpid())
