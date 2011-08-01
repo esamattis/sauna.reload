@@ -50,5 +50,5 @@ class MonkeyPatchingLoader(ImpLoader):
             import Products.Five.fiveconfigure
             setattr(Products.Five.fiveconfigure, "findProducts",
                     fiveconfiguretools.findProducts)
-            return u"<component></component>"
+            return "<component></component>"
         return super(MonkeyPatchingLoader, self).get_data(self, pathname)
