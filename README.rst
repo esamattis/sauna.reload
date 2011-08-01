@@ -73,13 +73,12 @@ Known issues
 TODOs
 -----
 
-* Update ``autoincludetools.py`` and ``fiveconfiguretools.py`` to use
-  ``reload_watch_dir`` env
-
 * Figure out how to detect failed installation of packages in atexit of Zope2
   to prevent infinitely spawning fork loop
 
 * Be able to reload oldschool (Products.XXX and Five) packages too
+
+* Update ``autoincludetools.py`` to use ``reload_watch_dir`` env
 
 * Test it!
 
