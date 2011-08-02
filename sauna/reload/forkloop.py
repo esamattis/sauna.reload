@@ -138,14 +138,6 @@ class ForkLoop(object):
 
 
 
-    def should_stop(self):
-        """Stop modified monitor in children"""
-
-        if self.child_pid == 0:
-            print "stop monitor", os.getpid()
-
-        return self.child_pid == 0
-
 
     def exitHandler(self):
         """Ask parent to spawn new child"""
