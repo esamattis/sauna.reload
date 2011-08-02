@@ -34,17 +34,16 @@ class ForkLoop(object):
 
     def __init__(self):
 
-
-        self.active = False
-
         # Create child on start
         self.fork = True
 
-        self.parent_pid = os.getpid()
-        self.child_pid = None
+        self.active = False
         self.killed_child = False
 
-        self.boot_started = None
+        self.parent_pid = os.getpid()
+        self.child_pid = None
+
+        # Timers
         self.boot_started = None
         self.child_started = None
 
