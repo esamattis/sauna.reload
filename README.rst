@@ -61,7 +61,7 @@ Fork loop is not active by default. You can activate it by setting
 
     RELOAD_PATH=src bin/instance fg
 
-Or if you want to optimize load speed you can specify your eggs one by one::
+Or if you want to optimize load speed you can specify only some of your development eggs::
 
     RELOAD_PATH=src/my.egg:src/my.another.egg bin/instance fg
 
