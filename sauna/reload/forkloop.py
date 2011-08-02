@@ -56,17 +56,18 @@ class ForkLoop(object):
         self.child_started = time.time()
 
 
-    def scheduleFork(self, signum, frame):
-        print "Parent got signal", os.getpid()
-        self.fork = True
 
 
     def start(self):
-        """Start fork loop"""
-
-        signal.signal(signal.SIGUSR1, self.scheduleFork)
+        """
+        Start fork loop.
+        """
 
         self.active = True
+
+        # SIGUSR1 tells us that we can spawn new child
+        signal.signal(signal.SIGUSR1, self._scheduleFork)
+
 
         print "Fork loop starting on process", os.getpid()
         while True:
@@ -81,23 +82,30 @@ class ForkLoop(object):
 
             time.sleep(1)
 
+        self._prepareNewChild()
 
+
+    def _prepareNewChild(self):
+        """
+        Prepare newly forked child. Make sure that it can properly read DB
+        and install deferred products.
+        """
 
         # Register exit listener. We cannot immediately spawn new child when we
         # get a modified event. Must wait that child has closed database etc.
-        atexit.register(self.exitHandler)
+        atexit.register(self._exitHandler)
 
         from Globals import DB
         db_index = FileStorageIndex(DB.storage)
         db_index.restore()
 
-        self.loadDeferredProducts()
+        self._loadDeferredProducts()
 
         print "Booted up new new child in %s seconds. Pid %s" % (
             time.time() - self.child_started, os.getpid())
 
 
-    def loadDeferredProducts(self):
+    def _loadDeferredProducts(self):
         # import Products.Five.fiveconfigure
         # from sauna.reload import fiveconfiguretools
         # setattr(Products.Five.fiveconfigure, "findProducts",
@@ -116,7 +124,16 @@ class ForkLoop(object):
         # yet installed.
 
 
+
+
+
     def spawnNewChild(self):
+        """
+        STEP 1 (parent): New child spawning starts by killing the current child.
+        """
+
+        # TODO: get rid of prints here. Use exceptions.
+
         if not self.active:
             print "Loop not started yet"
             return
@@ -132,15 +149,16 @@ class ForkLoop(object):
             print "Cannot kill from child!"
             return
 
-        print "Kill child!"
         self.killed_child = True
         os.kill(self.child_pid, signal.SIGINT)
 
 
 
-
-    def exitHandler(self):
-        """Ask parent to spawn new child"""
+    def _exitHandler(self):
+        """
+        STEP 2 (child): Child is about to die. Fix DB and ask parent to spawn
+        new child.
+        """
 
         # TODO: Fetch adapter with interface
         # Must import here because we don't have DB on bootup yet
@@ -154,5 +172,10 @@ class ForkLoop(object):
 
 
 
+    def _scheduleFork(self, signum, frame):
+        """
+        STEP 3 (parent): Child told us via SIGUSR1 that we can spawn new child
+        """
+        self.fork = True
 
 
