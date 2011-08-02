@@ -137,8 +137,6 @@ class ForkLoop(object):
         self.killed_child = True
         os.kill(self.child_pid, signal.SIGINT)
 
-    def huuda(self):
-        print "AAAAAAA"
 
 
     def should_stop(self):
