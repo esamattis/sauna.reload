@@ -9,7 +9,10 @@ class ReloadPaths(object):
         return len(self.paths) > 0
 
     def has(self, test_path):
+        test_path = test_path.rstrip("/")
+
         for path in self.paths:
+            path = path.rstrip("/")
             if path == "":
                 continue
 
