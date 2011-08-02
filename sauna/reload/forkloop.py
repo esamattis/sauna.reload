@@ -94,6 +94,13 @@ class ForkLoop(object):
         db_index = FileStorageIndex(DB.storage)
         db_index.restore()
 
+        self.loadDeferredProducts()
+
+        print "Booted up new new child in %s seconds. Pid %s" % (
+            time.time() - self.child_started, os.getpid())
+
+
+    def loadDeferredProducts(self):
         # import Products.Five.fiveconfigure
         # from sauna.reload import fiveconfiguretools
         # setattr(Products.Five.fiveconfigure, "findProducts",
@@ -110,10 +117,6 @@ class ForkLoop(object):
         # TODO: run install_package for every package added
         # to Products._packages_to_initialize, which are not
         # yet installed.
-
-
-        print "Booted up new new child in %s seconds. Pid %s" % (
-            time.time() - self.child_started, os.getpid())
 
 
     def spawnNewChild(self):
