@@ -24,18 +24,21 @@ import time
 import os
 import signal
 import atexit
-import transaction
 
-from persistent.TimeStamp import TimeStamp
-from ZODB.FileStorage.FileStorage import read_index
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 
+from sauna.reload.db import FileStorageIndex
+
+
+
 class ForkLoop(FileSystemEventHandler):
 
     def __init__(self):
+
+
 
         self.started = None
 
@@ -66,14 +69,12 @@ class ForkLoop(FileSystemEventHandler):
     def signalParent(self):
         """Ask parent to spawn new child"""
 
-        transaction.commit()
-
-        # Save ``Data.fs.index`` before dying to notify the next child of the
-        # peristent changes
+        # TODO: Fetch adapter with interface
+        # Must import here because we don't have DB on bootup yet
         from Globals import DB
-        DB.storage._save_index()
-        # TODO: The code aboce should be abstracted with ZCA to make
-        # ``sauna.reload`` to be able to support also other storages than ZODB.
+        db_index = FileStorageIndex(DB.storage)
+        db_index.save()
+
 
         print "Signaling parent with %s" % self.parent_pid
         os.kill(self.parent_pid, signal.SIGUSR1)
@@ -84,7 +85,6 @@ class ForkLoop(FileSystemEventHandler):
         signal.signal(signal.SIGUSR1, self.scheduleFork)
         self.startMonitor()
 
-        # TODO: Reset ZODB cache
 
         print "Fork loop starting on process", os.getpid()
         while True:
@@ -106,21 +106,9 @@ class ForkLoop(FileSystemEventHandler):
         # get a modified event. Must wait that child has closed database etc.
         atexit.register(self.signalParent)
 
-        # Load saved ``Data.fs.index`` to see the persistent changes created by
-        # the previous child.
         from Globals import DB
-        index, start, ltid = DB.storage._restore_index()
-        # Sanity check. Last transaction in restored index must match
-        # the last transaction given by FileStorage transaction iterator.
-        if ltid == tuple(DB.storage.iterator())[-1].tid:
-            DB.storage._initIndex(index, {})
-            DB.storage._pos, DB.storage._oid, tid = read_index(
-                DB.storage._file, DB.storage._file_name, index, {},
-                stop=None, ltid=ltid, start=start, read_only=False)
-            DB.storage._ltid = tid
-            DB.storage._ts = tid = TimeStamp(tid)
-        # TODO: The code aboce should be abstracted with ZCA to make
-        # ``sauna.reload`` to be able to support also other storages than ZODB.
+        db_index = FileStorageIndex(DB.storage)
+        db_index.restore()
 
         # import Products.Five.fiveconfigure
         # from sauna.reload import fiveconfiguretools
@@ -140,42 +128,8 @@ class ForkLoop(FileSystemEventHandler):
         # yet installed.
 
 
-        # self.seekToEndOfDB()  # old way to force refresh of FileStorage index
-
         print "Booted up new new child in %s seconds. Pid %s" % (
             time.time() - self.child_started, os.getpid())
-
-
-    def seekToEndOfDB(self):
-
-        # TODO: is it really required to reopen Data.fs?
-
-        from Globals import DB
-        from ZODB.FileStorage.FileStorage import read_index
-        storage = DB.storage
-        storage._lock_acquire()
-        try:
-            storage._file.close()
-            storage._file = open(storage._file_name, 'r+b')
-            stop='\377'*8
-
-            index, tindex = storage._newIndexes()
-            index, start, ltid = storage._restore_index()
-            storage._initIndex(index, tindex)
-            storage._pos, storage._oid, tid = read_index(
-                storage._file, storage._file_name, index, tindex, stop,
-                ltid=ltid, start=start, read_only=False,
-                )
-        finally:
-            storage._lock_release()
-
-
-        # DB.invalidateCache()
-        # DB._connectionMap(lambda c: c.invalidateCache())
-        # DB.cacheFullSweep()
-        # DB.cacheMinimize()
-        # # long(os.path.getsize(DB.storage._file_name))
-        # DB.pack(time.time())
 
 
     def should_stop(self):
