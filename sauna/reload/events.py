@@ -21,11 +21,18 @@
 # along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
+import os
 
 from sauna.reload import forkloop
 from sauna.reload.autoincludetools import get_deferred_deps
+from sauna.reload.watcher import Watcher
+
 
 def startForkLoop(event):
+
+    # Start fs monitor before the forkloop
+    Watcher(os.environ.get("reload_watch_dir", "."), forkloop).start()
+
     # Build and execute a configuration file to include meta, configuration and
     # overrides for dependencies of the deferred development packages.
     deps = get_deferred_deps()

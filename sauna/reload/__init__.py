@@ -32,8 +32,10 @@
 
 import sys
 
-from sauna.reload.reload import forkloop
+from sauna.reload.reload import ForkLoop
 
+
+forkloop = ForkLoop()
 forkloop.startBootTimer()
 
 from sauna.reload.monkeypatcher import MonkeyPatchingLoader

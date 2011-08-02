@@ -26,21 +26,16 @@ import signal
 import atexit
 
 
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-
-
 from sauna.reload.db import FileStorageIndex
 
 
 
-class ForkLoop(FileSystemEventHandler):
+class ForkLoop(object):
 
     def __init__(self):
 
 
-
-        self.started = None
+        self.active = False
 
         # Create child on start
         self.fork = True
@@ -66,18 +61,6 @@ class ForkLoop(FileSystemEventHandler):
         print "Parent got signal", os.getpid()
         self.fork = True
 
-    def signalParent(self):
-        """Ask parent to spawn new child"""
-
-        # TODO: Fetch adapter with interface
-        # Must import here because we don't have DB on bootup yet
-        from Globals import DB
-        db_index = FileStorageIndex(DB.storage)
-        db_index.save()
-
-
-        print "Signaling parent with %s" % self.parent_pid
-        os.kill(self.parent_pid, signal.SIGUSR1)
 
     def start(self):
         """Start fork loop"""
@@ -85,6 +68,8 @@ class ForkLoop(FileSystemEventHandler):
         signal.signal(signal.SIGUSR1, self.scheduleFork)
         self.startMonitor()
 
+
+        self.active = True
 
         print "Fork loop starting on process", os.getpid()
         while True:
@@ -100,11 +85,10 @@ class ForkLoop(FileSystemEventHandler):
             time.sleep(1)
 
 
-        self.started = time.time()
 
         # Register exit listener. We cannot immediately spawn new child when we
         # get a modified event. Must wait that child has closed database etc.
-        atexit.register(self.signalParent)
+        atexit.register(self.exitHandler)
 
         from Globals import DB
         db_index = FileStorageIndex(DB.storage)
@@ -132,26 +116,9 @@ class ForkLoop(FileSystemEventHandler):
             time.time() - self.child_started, os.getpid())
 
 
-    def should_stop(self):
-        """Stop modified monitor in children"""
-
-        if self.child_pid == 0:
-            print "stop monitor", os.getpid()
-
-        return self.child_pid == 0
-
-
-    def startMonitor(self):
-        """Start file monitoring thread"""
-        path = os.environ.get("reload_watch_dir", ".")
-        observer = Observer()
-        observer.schedule(self, path=path, recursive=True)
-        print "Starting file monitor on", path
-        observer.start()
-
-
-    def on_modified(self, event):
-        if not event.src_path.endswith(".py"):
+    def spawnNewChild(self):
+        if not self.active:
+            print "Loop not started yet"
             return
 
         if self.killed_child:
@@ -165,12 +132,34 @@ class ForkLoop(FileSystemEventHandler):
             print "Cannot kill from child!"
             return
 
-        print "Change on %s" % event.src_path
         print "Kill child!"
         self.killed_child = True
         os.kill(self.child_pid, signal.SIGINT)
 
 
+    def should_stop(self):
+        """Stop modified monitor in children"""
 
-forkloop = ForkLoop()
+        if self.child_pid == 0:
+            print "stop monitor", os.getpid()
+
+        return self.child_pid == 0
+
+
+    def exitHandler(self):
+        """Ask parent to spawn new child"""
+
+        # TODO: Fetch adapter with interface
+        # Must import here because we don't have DB on bootup yet
+        from Globals import DB
+        db_index = FileStorageIndex(DB.storage)
+        db_index.save()
+
+
+        print "Signaling parent pid %s" % self.parent_pid
+        os.kill(self.parent_pid, signal.SIGUSR1)
+
+
+
+
 
