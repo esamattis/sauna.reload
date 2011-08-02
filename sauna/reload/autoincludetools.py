@@ -28,18 +28,16 @@ from pkg_resources import iter_entry_points
 
 from z3c.autoinclude.dependency import DependencyFinder
 
+from sauna.reload import reload_paths
+
 
 def defer_src_eggs():
     """Defer autoincluding of products by changing their
     ``z3c.autoinclude.plugin``-entrypoint to target ``sauna.reload`` instead
     of ``plone``"""
+
     for ep in iter_entry_points("z3c.autoinclude.plugin"):
-        # FIXME: We should use the to-be environment variable
-        # ``reload_watch_dir`` here, but because this method is invoked, while
-        # Zope is only just parsing zope.conf, that environment variable is not
-        # yet set and we cannot even use Zope's own tools to parse it from
-        # ``zope.conf``.
-        if "src" in ep.dist.location.split(os.path.sep)\
+        if reload_paths.has(ep.dist.location)\
             and ep.dist.project_name != "sauna.reload":
             ep.module_name = "sauna.reload"
 

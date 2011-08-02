@@ -21,17 +21,27 @@
 # along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
-import os
 
 from sauna.reload import forkloop
 from sauna.reload.autoincludetools import get_deferred_deps
 from sauna.reload.watcher import Watcher
+from sauna.reload import reload_paths
 
 
 def startForkLoop(event):
 
+    if not reload_paths.isActive():
+        print
+        print "No paths in RELOAD_PATH environment variable. Not starting fork loop."
+        print "Set it to your development egg paths to activete reloading"
+        print
+        print "Example: RELOAD_PATH=src bin/instance fg"
+        print
+        return
+
+
     # Start fs monitor before the forkloop
-    Watcher(os.environ.get("reload_watch_dir", "."), forkloop).start()
+    Watcher(reload_paths.getParentPaths(), forkloop).start()
 
     # Build and execute a configuration file to include meta, configuration and
     # overrides for dependencies of the deferred development packages.

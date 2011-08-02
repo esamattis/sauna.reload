@@ -22,16 +22,15 @@
 
 """Utilities for deferring loading of developed eggs"""
 
-from os import environ
 
 from pkg_resources import iter_entry_points
 
+from sauna.reload import reload_paths
 
 def findProducts():
     import Products
     from types import ModuleType
     products = []
-    reload_watch_dir = environ.get("reload_watch_dir", u"")  # all by default
     deferred = [ep.dist.project_name
                 for ep in iter_entry_points("z3c.autoinclude.plugin")
                 if ep.module_name == "sauna.reload"]
@@ -39,10 +38,10 @@ def findProducts():
         product = getattr(Products, name)
         if isinstance(product, ModuleType) and hasattr(product, "__file__"):
             # Do not *find* old-style products, which are under the
-            # reload_watch_dir.
+            # reload directories.
             # XXX: Because ``sauna.reload`` doesn't have full Five-support yet,
             # we select (or deselect) only those, which support autoinclude.
-            if not getattr(product, "__file__").startswith(reload_watch_dir)\
+            if not reload_paths.has(getattr(product, "__file__"))\
                 and product.__name__ not in deferred:
                 products.append(product)
     return products
@@ -52,7 +51,6 @@ def findDeferredProducts():
     import Products
     from types import ModuleType
     products = []
-    reload_watch_dir = environ.get("reload_watch_dir", u"")  # all by default
     deferred = [ep.dist.project_name
                 for ep in iter_entry_points("z3c.autoinclude.plugin")
                 if ep.module_name == "sauna.reload"]
@@ -60,8 +58,8 @@ def findDeferredProducts():
         product = getattr(Products, name)
         if isinstance(product, ModuleType) and hasattr(product, "__file__"):
             # *Find* only those old-style products, which are under the
-            # reload_watch_dir.
-            if getattr(product, "__file__").startswith(reload_watch_dir)\
+            # reload directories.
+            if reload_paths.has(getattr(product, "__file__"))\
                 and product.__name__ in deferred:
                 products.append(product)
     return products

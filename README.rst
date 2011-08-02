@@ -44,16 +44,26 @@ Installing
 ----------
 
 Add this package to your buildout eggs and add following
-``zope-conf-additional`` line and ``reload_watch_dir`` environment var to you
-instance part of buildout.cfg::
+``zope-conf-additional`` line  to you instance part of buildout.cfg::
 
     [instance]
     recipe = plone.recipe.zope2instance
     ...
     zope-conf-additional = %import sauna.reload
-    environment-vars =
-        reload_watch_dir ${buildout:directory}/src
 
+
+Using
+-----
+
+Fork loop is not active by default. You can activate it by setting
+``RELOAD_PATH`` environment variable to your development egg path(s)::
+
+
+    RELOAD_PATH=src bin/instance fg
+
+    Or if you want to optimize load speed you can specify your eggs one by one:
+
+    RELOAD_PATH=src/my.egg:src/my.another.egg bin/instance fg
 
 Known issues
 ------------

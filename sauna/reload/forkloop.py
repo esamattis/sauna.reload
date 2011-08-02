@@ -66,8 +66,6 @@ class ForkLoop(object):
         """Start fork loop"""
 
         signal.signal(signal.SIGUSR1, self.scheduleFork)
-        self.startMonitor()
-
 
         self.active = True
 
@@ -138,6 +136,9 @@ class ForkLoop(object):
         print "Kill child!"
         self.killed_child = True
         os.kill(self.child_pid, signal.SIGINT)
+
+    def huuda(self):
+        print "AAAAAAA"
 
 
     def should_stop(self):
