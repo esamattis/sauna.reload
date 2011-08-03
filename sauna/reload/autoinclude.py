@@ -25,7 +25,7 @@
 from pkg_resources import iter_entry_points
 
 from z3c.autoinclude.dependency import DependencyFinder
-from Products.Five.zcml import load_config, load_string
+from Zope2.App.zcml import load_config, load_string
 
 DEFERRED_TARGET = "sauna.reload"
 
