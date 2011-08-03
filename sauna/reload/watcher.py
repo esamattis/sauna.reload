@@ -43,7 +43,7 @@ class Watcher(FileSystemEventHandler):
     # TODO: on_create, moved etc. also
     def on_modified(self, event):
         if not True in [event.src_path.endswith(s)
-                        for s in [".py", ".zcml"]]:
+                        for s in [".py", ".zcml", ".po"]]:
             return
 
         print "Change on %s" % event.src_path
