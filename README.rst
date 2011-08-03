@@ -15,29 +15,29 @@ reload the code, but restarts small part of Zope2.
 
 It does following on Zope2 startup:
 
-* Defers loading of your development packages by hooking into PEP 302 loader
-  and changing their ``z3c.autoinclude`` target module
+1. Defers loading of your development packages by hooking into PEP 302 loader
+   and changing their ``z3c.autoinclude`` target module
 
-* Starts a watcher thread which monitors changes in your development py-files
+2. Starts a watcher thread which monitors changes in your development py-files
 
-* Stops loading of Zope2 in ``zope.processlifetime.IProcessStarting`` event by
-  stepping into a infinite loop; Just before this, tries to load all
-  non-developed dependencies of your development packages (resolved by
-  ``z3c.autoinclude``)
+3. Stops loading of Zope2 in ``zope.processlifetime.IProcessStarting`` event by
+   stepping into a infinite loop; Just before this, tries to load all
+   non-developed dependencies of your development packages (resolved by
+   ``z3c.autoinclude``)
 
-* It forks a new child and lets it pass the loop
+4. It forks a new child and lets it pass the loop
 
-* Loads all your development packages invoking ``z3c.autoinclude``. This is
-  fast!
+5. Loads all your development packages invoking ``z3c.autoinclude``. This is
+   fast!
 
-* And now every time when the watcher thread detects a change in development
-  files it will signal the child to shutdown and the child will signal
-  the parent to fork new a child when it is just about to close itself
+6. And now every time when the watcher thread detects a change in development
+   files it will signal the child to shutdown and the child will signal
+   the parent to fork new a child when it is just about to close itself
 
-* Just before dying, the child saves ``Data.fs.index`` to help the new child to
-  see the changes in ZODB (by loading the saved index)
+7. Just before dying, the child saves ``Data.fs.index`` to help the new child to
+   see the changes in ZODB (by loading the saved index)
 
-* GOTO 4
+8. GOTO 4
 
 
 Installing
