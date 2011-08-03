@@ -87,6 +87,8 @@ TODOs
 
 * Be able to reload oldschool (Products.XXX and Five) packages too
 
+* Reload localizations.
+
 * Test it!
 
 * Find out the limitations
