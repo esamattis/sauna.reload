@@ -89,10 +89,6 @@ TODOs
 
 * Find out the limitations
 
-* Disable fork loop if debug mode is not on
-
-* Disable fork loop when running tests
-
 * Document why it is hard to reload plone core packages
 
 
