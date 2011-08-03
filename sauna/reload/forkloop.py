@@ -68,7 +68,7 @@ class ForkLoop(object):
 
         # SIGCHLD tells us that child process has really died and we can spawn
         # new child
-        signal.signal(signal.SIGCHLD, self.wait)
+        signal.signal(signal.SIGCHLD, self._waitChildToDieAndScheduleNew)
 
         print "Fork loop starting on process", os.getpid()
         while True:
