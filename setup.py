@@ -5,7 +5,7 @@ version = '0.1.0'
 
 setup(name='sauna.reload',
       version=version,
-      description="",
+      description="Instant code reloading for Plone using a fork loop.",
       long_description=open("README.rst").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from

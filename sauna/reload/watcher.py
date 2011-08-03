@@ -40,8 +40,7 @@ class Watcher(FileSystemEventHandler):
             observer.schedule(self, path=path, recursive=True)
             observer.start()
 
-    # TODO: on_create, moved etc. also
-    def on_modified(self, event):
+    def on_any_event(self, event):
         if not True in [event.src_path.endswith(s)
                         for s in [".py", ".zcml", ".po"]]:
             return
