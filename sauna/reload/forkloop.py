@@ -32,13 +32,11 @@ from sauna.reload.db import FileStorageIndex
 class ForkLoop(object):
 
     def __init__(self):
-        # Create child on start
-        self.fork = True
 
+        self.fork = True # Create child on start
         self.active = False
         self.pause = False
         self.killed_child = True
-
 
         self.parent_pid = os.getpid()
         self.child_pid = None
@@ -55,9 +53,8 @@ class ForkLoop(object):
         self.child_started = time.time()
 
 
-    def _waitChildToDieAndScheduleNew(self, signal, frame):
-        os.wait()
-        self._scheduleFork()
+    def _scheduleFork(self, signum=None, frame=None):
+        self.fork = True
 
     def start(self):
         """
@@ -170,9 +167,14 @@ class ForkLoop(object):
         db_index.save()
 
 
+    def _waitChildToDieAndScheduleNew(self, signal, frame):
+        """
+        STEP 3 (parent): Child told us via SIGCHLD that we can spawn new child
+        """
 
-    def _scheduleFork(self, signum=None, frame=None):
-        """
-        STEP 3 (parent): Child told us via SIGUSR1 that we can spawn new child
-        """
-        self.fork = True
+        # Acknowledge dead child
+        os.wait()
+
+        # Schedule new
+        self._scheduleFork()
+
