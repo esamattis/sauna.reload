@@ -61,12 +61,12 @@ Fork loop is not active by default. You can activate it by setting
 ``RELOAD_PATH`` environment variable to your development product path(s). In
 most setups ``src`` is what you want::
 
-    RELOAD_PATH=src bin/instance fg
+    $ RELOAD_PATH=src bin/instance fg
 
 Or if you want to optimize load speed you can directly specify only some of
 your development products::
 
-    RELOAD_PATH=src/my.product:src/my.another.product bin/instance fg
+    $ RELOAD_PATH=src/my.product:src/my.another.product bin/instance fg
 
 
 Known issues
