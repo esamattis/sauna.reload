@@ -3,6 +3,8 @@
 *sauna.reload: so that you can finish your Plone development today and relax in
 sauna after calling it a day*
 
+Please, see `Known Issues`_ and `TODOs`_. Report new issues at:
+https://github.com/epeli/sauna.reload/issues.
 
 Introduction
 ------------

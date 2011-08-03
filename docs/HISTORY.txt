@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0dev (unreleased)
--------------------
+0.1.0 - 2011-08-03
+------------------
 
-- Initial release
+- First experimental release.
