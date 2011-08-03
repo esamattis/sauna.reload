@@ -54,6 +54,11 @@ class ForkLoop(object):
     def startChildBooTimer(self):
         self.child_started = time.time()
 
+
+    def _waitChildToDieAndScheduleNew(self, signal, frame):
+        os.wait()
+        self._scheduleFork()
+
     def start(self):
         """
         Start fork loop.
@@ -61,8 +66,9 @@ class ForkLoop(object):
 
         self.active = True
 
-        # SIGUSR1 tells us that we can spawn new child
-        signal.signal(signal.SIGUSR1, self._scheduleFork)
+        # SIGCHLD tells us that child process has really died and we can spawn
+        # new child
+        signal.signal(signal.SIGCHLD, self.wait)
 
         print "Fork loop starting on process", os.getpid()
         while True:
@@ -151,10 +157,10 @@ class ForkLoop(object):
 
         self.killed_child = True
 
+
     def _exitHandler(self):
         """
-        STEP 2 (child): Child is about to die. Fix DB and ask parent to spawn
-        new child.
+        STEP 2 (child): Child is about to die. Fix DB.
         """
 
         # TODO: Fetch adapter with interface
@@ -162,9 +168,6 @@ class ForkLoop(object):
         from Globals import DB
         db_index = FileStorageIndex(DB.storage)
         db_index.save()
-
-        print "Signaling parent pid %s" % self.parent_pid
-        os.kill(self.parent_pid, signal.SIGUSR1)
 
 
 
