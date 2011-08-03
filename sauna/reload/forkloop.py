@@ -36,7 +36,9 @@ class ForkLoop(object):
         self.fork = True
 
         self.active = False
-        self.killed_child = False
+        self.pause = False
+        self.killed_child = True
+
 
         self.parent_pid = os.getpid()
         self.child_pid = None
@@ -67,6 +69,21 @@ class ForkLoop(object):
 
             if self.fork:
                 self.fork = False
+
+                if self.pause:
+                    continue
+
+                if not self.killed_child:
+                    print
+                    print "Child died on bootup. Pausing fork loop for now. "
+                    print "Fix possible errors and save edits and we'll try booting again."
+
+                    # Child died because of unknown reason. Mark it as killed
+                    # and go into pause mode.
+                    self.killed_child = True
+                    self.pause = True
+                    continue
+
                 self.startChildBooTimer()
                 self.child_pid = os.fork()
                 if self.child_pid == 0:
@@ -109,8 +126,9 @@ class ForkLoop(object):
             print "Loop not started yet"
             return
 
-        if self.killed_child:
-            return
+        # if self.killed_child:
+        #     print "Child already killed"
+        #     return
 
         if self.child_pid is None:
             print "No killing yet. Not started child yet"
@@ -120,8 +138,18 @@ class ForkLoop(object):
             print "Cannot kill from child!"
             return
 
+
+        self.pause = False
+
+        if not self.killed_child:
+            print "sending SIGINT to child"
+            os.kill(self.child_pid, signal.SIGINT)
+        else:
+            # Ok, we already have killed the child, but asking for new child
+            print "Not sending SIGINT because we already killed the child. Just scheduling new fork."
+            self._scheduleFork()
+
         self.killed_child = True
-        os.kill(self.child_pid, signal.SIGINT)
 
     def _exitHandler(self):
         """
@@ -138,7 +166,9 @@ class ForkLoop(object):
         print "Signaling parent pid %s" % self.parent_pid
         os.kill(self.parent_pid, signal.SIGUSR1)
 
-    def _scheduleFork(self, signum, frame):
+
+
+    def _scheduleFork(self, signum=None, frame=None):
         """
         STEP 3 (parent): Child told us via SIGUSR1 that we can spawn new child
         """

@@ -70,8 +70,6 @@ your development products::
 Known issues
 ------------
 
-* If there is an start up error you'll get a loop of forever
-
 * Currently reloading is limited to new style z3c.autoincluded Python packages
   and does not cover old-style Products.XXX namespaced packages or
   Five-packages (e.g. does not reload Archetypes yet)
@@ -85,14 +83,17 @@ Known issues
 TODOs
 -----
 
-* Figure out how to detect failed installation of packages in atexit of Zope2
-  to prevent infinitely spawning fork loop
-
 * Be able to reload oldschool (Products.XXX and Five) packages too
 
 * Test it!
 
 * Find out the limitations
+
+* Disable fork loop if debug mode is not on
+
+* Disable fork loop when running tests
+
+* Document why it is hard to reload plone core packages
 
 
 Authors
