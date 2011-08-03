@@ -26,7 +26,8 @@ import imp
 import os
 from pkgutil import ImpLoader
 
-from sauna.reload import fiveconfiguretools, autoincludetools
+from sauna.reload import autoinclude, fiveconfigure
+
 
 class MonkeyPatchingLoader(ImpLoader):
     """Lucky for us ZConfig will use PEP 302 module hooks to load this file,
@@ -43,12 +44,10 @@ class MonkeyPatchingLoader(ImpLoader):
 
     def get_data(self, pathname):
         if os.path.split(pathname) == (self.filename, "component.xml"):
-            # apply our patch and return dummy config to keep zope happy
-            autoincludetools.defer_src_eggs()
-            # prevent Five from loading packages under development
-            # leaving them for ``sauna.reload`` to configure
-            import Products.Five.fiveconfigure
-            setattr(Products.Five.fiveconfigure, "findProducts",
-                    fiveconfiguretools.findProducts)
+            # 1) Defer autoinclude of packages found under reload paths.
+            autoinclude.defer_paths()
+            # 2) Prevent Five from finding packages under reload paths.
+            fiveconfigure.defer_install()
+            # 3) Return dummy config to keep Zope happy.
             return "<component></component>"
         return super(MonkeyPatchingLoader, self).get_data(self, pathname)

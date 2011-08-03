@@ -33,10 +33,7 @@
 import sys
 import os
 
-
-
 from sauna.reload.forkloop import ForkLoop
-
 from sauna.reload.utils import ReloadPaths
 
 reload_paths = ReloadPaths([os.path.join(os.getcwd(), p)
@@ -45,8 +42,6 @@ reload_paths = ReloadPaths([os.path.join(os.getcwd(), p)
 forkloop = ForkLoop()
 forkloop.startBootTimer()
 
-from sauna.reload.monkeypatcher import MonkeyPatchingLoader
-
-
 # Hook into PEP 302 laoder
+from sauna.reload.monkeypatcher import MonkeyPatchingLoader
 __loader__ = MonkeyPatchingLoader(sys.modules[__name__])

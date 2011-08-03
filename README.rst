@@ -66,6 +66,7 @@ your development products::
 
     RELOAD_PATH=src/my.product:src/my.another.product bin/instance fg
 
+
 Known issues
 ------------
 
@@ -73,7 +74,7 @@ Known issues
 
 * Currently reloading is limited to new style z3c.autoincluded Python packages
   and does not cover old-style Products.XXX namespaced packages or
-  Five-packages (== does not reload Archetypes yet)
+  Five-packages (e.g. does not reload Archetypes yet)
 
 * Currently only FileStorage (ZODB) is supported
 
@@ -89,15 +90,9 @@ TODOs
 
 * Be able to reload oldschool (Products.XXX and Five) packages too
 
-* Update ``autoincludetools.py`` to use ``reload_watch_dir`` env
-
 * Test it!
 
 * Find out the limitations
-
-* Disable fork loop if debug mode is not on
-
-* Disable fork loop when running tests
 
 
 Authors

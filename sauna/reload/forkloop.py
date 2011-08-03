@@ -25,15 +25,13 @@ import os
 import signal
 import atexit
 
-
+from sauna.reload import autoinclude, fiveconfigure
 from sauna.reload.db import FileStorageIndex
-
 
 
 class ForkLoop(object):
 
     def __init__(self):
-
         # Create child on start
         self.fork = True
 
@@ -47,16 +45,12 @@ class ForkLoop(object):
         self.boot_started = None
         self.child_started = None
 
-
     def startBootTimer(self):
         if not self.boot_started:
             self.boot_started = time.time()
 
     def startChildBooTimer(self):
         self.child_started = time.time()
-
-
-
 
     def start(self):
         """
@@ -67,7 +61,6 @@ class ForkLoop(object):
 
         # SIGUSR1 tells us that we can spawn new child
         signal.signal(signal.SIGUSR1, self._scheduleFork)
-
 
         print "Fork loop starting on process", os.getpid()
         while True:
@@ -84,7 +77,6 @@ class ForkLoop(object):
 
         self._prepareNewChild()
 
-
     def _prepareNewChild(self):
         """
         Prepare newly forked child. Make sure that it can properly read DB
@@ -99,37 +91,16 @@ class ForkLoop(object):
         db_index = FileStorageIndex(DB.storage)
         db_index.restore()
 
-        self._loadDeferredProducts()
+        autoinclude.include_deferred()
+        fiveconfigure.install_deferred()
 
         print "Booted up new new child in %s seconds. Pid %s" % (
             time.time() - self.child_started, os.getpid())
 
-
-    def _loadDeferredProducts(self):
-        # import Products.Five.fiveconfigure
-        # from sauna.reload import fiveconfiguretools
-        # setattr(Products.Five.fiveconfigure, "findProducts",
-        #         fiveconfiguretools.findDeferredProducts)
-
-        from Products.Five.zcml import load_config
-        import sauna.reload
-        load_config("autoinclude.zcml", sauna.reload)
-
-        # setattr(Products.Five.fiveconfigure, "findProducts",
-        #         fiveconfiguretools.findProducts)
-        # TODO: Find out why developed Five-products were not
-        # added into Products._packages_to_initialize.
-        # TODO: run install_package for every package added
-        # to Products._packages_to_initialize, which are not
-        # yet installed.
-
-
-
-
-
     def spawnNewChild(self):
         """
-        STEP 1 (parent): New child spawning starts by killing the current child.
+        STEP 1 (parent): New child spawning starts by killing the current
+        child.
         """
 
         # TODO: get rid of prints here. Use exceptions.
@@ -152,8 +123,6 @@ class ForkLoop(object):
         self.killed_child = True
         os.kill(self.child_pid, signal.SIGINT)
 
-
-
     def _exitHandler(self):
         """
         STEP 2 (child): Child is about to die. Fix DB and ask parent to spawn
@@ -166,16 +135,11 @@ class ForkLoop(object):
         db_index = FileStorageIndex(DB.storage)
         db_index.save()
 
-
         print "Signaling parent pid %s" % self.parent_pid
         os.kill(self.parent_pid, signal.SIGUSR1)
-
-
 
     def _scheduleFork(self, signum, frame):
         """
         STEP 3 (parent): Child told us via SIGUSR1 that we can spawn new child
         """
         self.fork = True
-
-

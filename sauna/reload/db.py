@@ -1,9 +1,31 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2011 University of Jyväskylä
+#
+# Authors:
+#     Esa-Matti Suuronen <esa-matti@suuronen.org>
+#     Asko Soukka <asko.soukka@iki.fi>
+#
+# This file is part of sauna.reload.
+#
+# sauna.reload is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# sauna.reload is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
 from persistent.TimeStamp import TimeStamp
 
 from ZODB.FileStorage.FileStorage import read_index
 
-# TODO: register to ZCA so that ``sauna.reload`` is to support also other
+
+# TODO: register to ZCA so that ``sauna.reload`` can support also other
 # storages than ZODB.
 class FileStorageIndex(object):
 
@@ -11,23 +33,19 @@ class FileStorageIndex(object):
         self.storage = storage
 
     def save(self):
-
-         # Save ``Data.fs.index`` before dying to notify the next child of the
-         # peristent changes
-         self.storage._lock_acquire()
-         try:
-             self.storage._save_index()
-         finally:
-             self.storage._lock_release()
-
-        # TODO: The code aboce should be abstracted with ZCA to make
-        # ``sauna.reload`` to be able to support also other storages than ZODB.
+        # Save ``Data.fs.index`` before dying to notify the next child of the
+        # persistent changes.
+        self.storage._lock_acquire()
+        try:
+            self.storage._save_index()
+        finally:
+            self.storage._lock_release()
 
     def restore(self):
-         self.storage._lock_acquire()
-         try:
-            # Load saved ``Data.fs.index`` to see the persistent changes created by
-            # the previous child.
+        self.storage._lock_acquire()
+        try:
+            # Load saved ``Data.fs.index`` to see the persistent changes
+            # created by the previous child.
             index, start, ltid = self.storage._restore_index()
             # Sanity check. Last transaction in restored index must match
             # the last transaction given by FileStorage transaction iterator.
@@ -38,5 +56,5 @@ class FileStorageIndex(object):
                     stop=None, ltid=ltid, start=start, read_only=False)
                 self.storage._ltid = tid
                 self.storage._ts = tid = TimeStamp(tid)
-         finally:
-             self.storage._lock_release()
+        finally:
+            self.storage._lock_release()
