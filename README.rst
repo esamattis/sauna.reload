@@ -106,6 +106,20 @@ your pdb, you may add the following to your ``~/.pdbrc``::
    term_echo[3] = term_echo[3] | termios.ECHO
    term_result = termios.tcsetattr(term_fd, termios.TCSADRAIN, term_echo)
 
+Troubleshooting
+==================
+
+Too many files open on OSX
+-----------------------------
+
+Watchdog, the Python library used by sauna.reload internally,  
+must be compiled with fsevent support to allow file-system monitoring without
+need to open each individual file. In OSX Snow Leopard the default limit of open file handles
+is 256 and on OSX raising this limit is made unnecessary difficult.
+
+More info
+
+* https://github.com/epeli/sauna.reload/issues/4
 
 Authors
 =======
