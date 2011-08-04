@@ -105,7 +105,7 @@ been yet installed.  Useful if you want to do something before your code gets
 loaded.  Note that you cannot listen this event on a package that is marked for
 reloading as it is not yet installed when this is fired.
 
-   sauna.reload.events.IForkedChildIsReady
+   sauna.reload.events.INewChildIsReady
 
 Emitted when all the development packages has been installed to the new forked
 child.  Useful for notifications etc.
