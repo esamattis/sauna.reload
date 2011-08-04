@@ -22,9 +22,12 @@
 
 import os
 import sys
+import logging
+logger = logging.getLogger("sauna.reload")
 
-def errline(msg=""):
-    sys.stderr.write(str(msg) + "\n")
+def errline(msg="", *rest):
+    rest =  " ".join(map(str, rest))
+    sys.stderr.write(str(msg) + " " + rest + "\n")
 
 
 class ReloadPaths(object):

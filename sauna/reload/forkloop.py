@@ -35,8 +35,9 @@ registerHandler = Signals.SignalHandler.SignalHandler.registerHandler
 from sauna.reload import autoinclude, fiveconfigure
 from sauna.reload.db import FileStorageIndex
 from sauna.reload.events import NewChildForked, NewChildIsReady
-from sauna.reload.utils import errline
+from sauna.reload.utils import errline, logger
 
+class CannotSpawnNewChild(Exception): pass
 
 class ForkLoop(object):
 
@@ -120,7 +121,7 @@ class ForkLoop(object):
 
         self.active = True
 
-        errline("Fork loop starting on process", os.getpid())
+        logger.info("Fork loop starting on process %s" % os.getpid())
         while True:
             self.forking = False
 
@@ -131,13 +132,13 @@ class ForkLoop(object):
                 self.fork = False
 
                 if self.pause:
-                    errline("Pause mode, fork canceled")
                     continue
 
                 if not self.killed_child:
                     errline()
                     errline("Child died on bootup. Pausing fork loop for now. ")
                     errline("Fix possible errors and save edits and we'll try booting again.")
+                    errline("Waiting...")
 
                     # Child died because of unknown reason. Mark it as killed
                     # and go into pause mode.
@@ -145,9 +146,7 @@ class ForkLoop(object):
                     self.pause = True
                     continue
 
-
                 if self.isChildAlive():
-                    errline("Child %i is still alive. Waiting it to die." % self.child_pid)
                     continue
 
                 self.forking = True
@@ -164,7 +163,7 @@ class ForkLoop(object):
 
         self.forking = False
 
-        errline( "Booted up new new child in %s seconds. Pid %s" % (
+        logger.info("Booted up new new child in %s seconds. Pid %s" % (
             time.time() - self.child_started, os.getpid()))
 
         notify(NewChildIsReady(self))
@@ -198,29 +197,24 @@ class ForkLoop(object):
         child.
         """
 
-        # TODO: get rid of prints here. Use exceptions.
 
         if not self.active:
-            print "Loop not started yet"
-            return
+            raise CannotSpawnNewChild("Loop not started yet")
 
         if self.forking:
-            print "Serious forking action is already going on. Cannot fork now."
-            return
+            raise CannotSpawnNewChild("Serious forking action is already going on. Cannot fork now.")
 
         if self.child_pid is None:
-            print "No killing yet. Not started child yet"
-            return
+            raise CannotSpawnNewChild("No killing yet. Not started child yet")
 
 
         self.pause = False
 
         if not self.killed_child or self.isChild():
-            print "sending SIGINT to child"
             self._killChild()
         else:
             # Ok, we already have sent the SIGINT the child, but asking for new child
-            print "Not sending SIGINT because we already killed the child. Just scheduling new fork."
+            logger.info("Not sending SIGINT because we already killed the child. Just scheduling new fork.")
             self._scheduleFork()
 
         self.killed_child = True
@@ -242,7 +236,7 @@ class ForkLoop(object):
         self.exit = True
 
         if self.isChildAlive():
-            errline("Parent dying. Killing child first.")
+            logger.info("Parent dying. Killing child first.")
             self._killChild()
 
     def _childExitHandler(self):

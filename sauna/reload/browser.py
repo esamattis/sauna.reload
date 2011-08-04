@@ -26,6 +26,8 @@ import os
 from zope.publisher.browser import BrowserView
 
 from sauna.reload import forkloop, reload_paths
+from sauna.reload.forkloop import CannotSpawnNewChild
+from sauna.reload.utils import logger
 
 class SaunaReload(BrowserView):
 
@@ -34,7 +36,11 @@ class SaunaReload(BrowserView):
         self.reload_paths = reload_paths
         self.forkloop = forkloop
         if self.request.get("fork", False):
-            self.forkloop.spawnNewChild()
+            try:
+                self.forkloop.spawnNewChild()
+            except CannotSpawnNewChild as e:
+                logger.error(str(e.args[0]))
+
 
         return self.index()
 

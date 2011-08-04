@@ -26,7 +26,7 @@ from ZServer.HTTPServer import zhttp_server
 from App.config import getConfiguration
 
 from sauna.reload import autoinclude, forkloop, reload_paths, watcher, monkeypatcher
-from sauna.reload.utils import errline
+from sauna.reload.utils import errline, logger
 
 
 def startForkLoop(event):
@@ -44,11 +44,12 @@ def startForkLoop(event):
 
     if not reload_paths:
         errline()
-        errline("No paths in RELOAD_PATH environment variable."
+        errline("sauna.reload: No paths in RELOAD_PATH environment variable. "
                 "Not starting fork loop.")
-        errline("Set it to your development egg paths to activete reloading")
+        errline("Set it to your development egg paths to activate reloading")
         errline()
-        errline("Example: $ RELOAD_PATH=src bin/instance fg")
+        errline("Example:")
+        errline("         $ RELOAD_PATH=src/ bin/instance fg")
         errline()
         return
 
@@ -63,11 +64,11 @@ def startForkLoop(event):
     zserver = [server for server in config.servers
         if isinstance(server, zhttp_server)][0]
 
-    errline( "We saved at least %s seconds from boot up time" %
+    logger.info( "We saved at least %s seconds from boot up time" %
         (time.time() - forkloop.boot_started))
 
-    errline("Packages marked for reload are listed in here: "
-            "http://127.0.0.1:%i/@@saunareload" % (zserver.port))
+    logger.info("Packages marked for reload are listed in here: "
+        "http://127.0.0.1:%i/@@saunareload" % (zserver.port))
 
     forkloop.start()
 

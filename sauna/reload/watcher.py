@@ -20,9 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
+
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
+from sauna.reload.forkloop import CannotSpawnNewChild
+from sauna.reload.utils import logger
 
 class Watcher(FileSystemEventHandler):
 
@@ -35,7 +38,7 @@ class Watcher(FileSystemEventHandler):
         """Start file monitoring thread"""
 
         for path in self.paths:
-            print "Starting file monitor on", path
+            logger.info("Starting file monitor on %s" %  path)
             observer = Observer()
             observer.schedule(self, path=path, recursive=True)
             observer.start()
@@ -45,6 +48,10 @@ class Watcher(FileSystemEventHandler):
                         for s in [".py", ".zcml", ".po"]]:
             return
 
-        print "Change on %s" % event.src_path
+        logger.info("Got '%s' event on %s" %
+            (event.event_type, event.src_path))
 
-        self.forkloop.spawnNewChild()
+        try:
+            self.forkloop.spawnNewChild()
+        except CannotSpawnNewChild as e:
+            logger.error(str(e.args[0]))
