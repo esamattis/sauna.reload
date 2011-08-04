@@ -20,12 +20,14 @@
 # You should have received a copy of the GNU General Public License
 # along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import time
 import os
 import signal
 import atexit
 
 from zope.event import notify
+from App.config import getConfiguration
 
 from sauna.reload import autoinclude, fiveconfigure
 from sauna.reload.db import FileStorageIndex
@@ -48,6 +50,9 @@ class ForkLoop(object):
         # Timers
         self.boot_started = None
         self.child_started = None
+
+        self.cfg = None
+        self.storage_index = None
 
     def isChild(self):
         return self.child_pid == 0
@@ -78,12 +83,32 @@ class ForkLoop(object):
         Start fork loop.
         """
 
-        self.active = True
+        # Load configuration here to make sure that everything for it is loaded
+        self.cfg = getConfiguration()
+
+        # Must import here because we don't have DB on bootup yet
+        from Globals import DB
+        # TODO: Fetch adapter with interface
+        self.storage_index = FileStorageIndex(DB.storage)
+
 
         # SIGCHLD tells us that child process has really died and we can spawn
         # new child
         signal.signal(signal.SIGCHLD, self._waitChildToDieAndScheduleNew)
+
+        # With SIGUSR1 child can tell that it dies by request, not by exception
+        # etc.
         signal.signal(signal.SIGUSR1, self._childIsGoingToDie)
+
+        self.loop()
+
+
+    def loop(self):
+        """
+        Magic happens here
+        """
+
+        self.active = True
 
         print "Fork loop starting on process", os.getpid()
         while True:
@@ -135,9 +160,12 @@ class ForkLoop(object):
         # get a modified event. Must wait that child has closed database etc.
         atexit.register(self._exitHandler)
 
-        from Globals import DB
-        db_index = FileStorageIndex(DB.storage)
-        db_index.restore()
+        # Make sure that PID files and locks stay here, because dying child
+        # will clear them.
+        self.makeLockFile()
+        self.makePidFile()
+
+        self.storage_index.restore()
 
         autoinclude.include_deferred()
         fiveconfigure.install_deferred()
@@ -194,11 +222,7 @@ class ForkLoop(object):
         STEP 2 (child): Child is about to die. Fix DB.
         """
 
-        # TODO: Fetch adapter with interface
-        # Must import here because we don't have DB on bootup yet
-        from Globals import DB
-        db_index = FileStorageIndex(DB.storage)
-        db_index.save()
+        self.storage_index.save()
 
 
     def _waitChildToDieAndScheduleNew(self, signal, frame):
@@ -211,4 +235,35 @@ class ForkLoop(object):
 
         # Schedule new
         self._scheduleFork()
+
+
+    # Modified from Zope2/Startup/__init__.py
+    def makePidFile(self):
+
+        if not self.cfg.zserver_read_only_mode:
+            # write the pid into the pidfile if possible
+            try:
+                if os.path.exists(self.cfg.pid_filename):
+                    os.unlink(self.cfg.pid_filename)
+                f = open(self.cfg.pid_filename, 'w')
+                f.write(str(self.parent_pid))
+                f.close()
+            except IOError:
+                pass
+
+
+    # Modified from Zope2/Startup/__init__.py
+    def makeLockFile(self):
+        if not self.cfg.zserver_read_only_mode:
+            from Zope2.Startup.misc.lock_file import lock_file
+            lock_filename = self.cfg.lock_filename
+            try:
+                if os.path.exists(lock_filename):
+                    os.unlink(lock_filename)
+                lockfile = open(lock_filename, 'w')
+                lock_file(lockfile)
+                lockfile.write(str(self.parent_pid))
+                lockfile.flush()
+            except IOError:
+                pass
 
