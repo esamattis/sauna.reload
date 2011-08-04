@@ -68,6 +68,11 @@ your development products::
 
     $ RELOAD_PATH=src/my.product:src/my.another.product bin/instance fg
 
+There is also a view on Zope2 root from which it is possible to
+manually reload code
+
+   http://127.0.0.1:8080/@@saunareload
+
 
 Known issues
 ------------
