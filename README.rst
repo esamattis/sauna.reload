@@ -1,4 +1,4 @@
-.. figure:: http://www.coactivate.org/projects/sauna-sprint-2010/project-home/image.jpeg
+.. figure:: https://github.com/epeli/sauna.reload/raw/gh-pages/saunasprint_logo.jpg
 
 *sauna.reload: so that you can finish your Plone development today and relax in
 sauna after calling it a day*
