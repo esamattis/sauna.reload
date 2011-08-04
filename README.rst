@@ -72,8 +72,6 @@ your development products::
 Known issues
 ------------
 
-* Does not reload products directly under old-school Products/-directory.
-
 * Currently only FileStorage (ZODB) is supported
 
 * The watcher (watchdog) does not compile on OS X Lion 10.7. Snowleopard is
