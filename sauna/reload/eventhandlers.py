@@ -25,19 +25,31 @@ import time
 from ZServer.HTTPServer import zhttp_server
 from App.config import getConfiguration
 
-from sauna.reload import autoinclude, forkloop, reload_paths, watcher
+from sauna.reload import autoinclude, forkloop, reload_paths, watcher, monkeypatcher
+from sauna.reload.utils import errline
 
 
 def startForkLoop(event):
 
+    if not monkeypatcher.PATCHED:
+        errline()
+        errline("sauna.reload is not installed correctly!")
+        errline("Your are missing following line from instance part of your buildout:")
+        errline()
+        errline("    zope-conf-additional = %import sauna.reload")
+        errline()
+        errline("Not starting fork loop.")
+        errline()
+        return
+
     if not reload_paths:
-        print
-        print ("No paths in RELOAD_PATH environment variable."
-               "Not starting fork loop.")
-        print "Set it to your development egg paths to activete reloading"
-        print
-        print "Example: RELOAD_PATH=src bin/instance fg"
-        print
+        errline()
+        errline("No paths in RELOAD_PATH environment variable."
+                "Not starting fork loop.")
+        errline("Set it to your development egg paths to activete reloading")
+        errline()
+        errline("Example: $ RELOAD_PATH=src bin/instance fg")
+        errline()
         return
 
     # Start fs monitor before the forkloop
@@ -51,11 +63,11 @@ def startForkLoop(event):
     zserver = [server for server in config.servers
         if isinstance(server, zhttp_server)][0]
 
-    print "We saved at least %s seconds from boot up time"\
-        % (time.time() - forkloop.boot_started)
+    errline( "We saved at least %s seconds from boot up time" %
+        (time.time() - forkloop.boot_started))
 
-    print ("Packages marked for reload are listed in here: "
-        "http://127.0.0.1:%i/@@saunareload" % (zserver.port))
+    errline("Packages marked for reload are listed in here: "
+            "http://127.0.0.1:%i/@@saunareload" % (zserver.port))
 
     forkloop.start()
 

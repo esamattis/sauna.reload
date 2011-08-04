@@ -35,6 +35,7 @@ registerHandler = Signals.SignalHandler.SignalHandler.registerHandler
 from sauna.reload import autoinclude, fiveconfigure
 from sauna.reload.db import FileStorageIndex
 from sauna.reload.events import NewChildForked, NewChildIsReady
+from sauna.reload.utils import errline
 
 
 class ForkLoop(object):
@@ -119,7 +120,7 @@ class ForkLoop(object):
 
         self.active = True
 
-        print "Fork loop starting on process", os.getpid()
+        errline("Fork loop starting on process", os.getpid())
         while True:
             self.forking = False
 
@@ -130,13 +131,13 @@ class ForkLoop(object):
                 self.fork = False
 
                 if self.pause:
-                    print "Pause mode, fork canceled"
+                    errline("Pause mode, fork canceled")
                     continue
 
                 if not self.killed_child:
-                    print
-                    print "Child died on bootup. Pausing fork loop for now. "
-                    print "Fix possible errors and save edits and we'll try booting again."
+                    errline()
+                    errline("Child died on bootup. Pausing fork loop for now. ")
+                    errline("Fix possible errors and save edits and we'll try booting again.")
 
                     # Child died because of unknown reason. Mark it as killed
                     # and go into pause mode.
@@ -146,7 +147,7 @@ class ForkLoop(object):
 
 
                 if self.isChildAlive():
-                    print "Child %i is still alive. Waiting it to die." % self.child_pid
+                    errline("Child %i is still alive. Waiting it to die." % self.child_pid)
                     continue
 
                 self.forking = True
@@ -163,8 +164,8 @@ class ForkLoop(object):
 
         self.forking = False
 
-        print "Booted up new new child in %s seconds. Pid %s" % (
-            time.time() - self.child_started, os.getpid())
+        errline( "Booted up new new child in %s seconds. Pid %s" % (
+            time.time() - self.child_started, os.getpid()))
 
         notify(NewChildIsReady(self))
 
@@ -185,7 +186,6 @@ class ForkLoop(object):
 
         self.storage_index.restore()
 
-        print "NOTIFYING"
         notify(NewChildForked(self))
 
         autoinclude.include_deferred()
@@ -228,7 +228,6 @@ class ForkLoop(object):
 
     def _killChild(self):
         if self.isChild():
-            print "Killing from child. Kill itself"
             # Signal parent that this is requested kill, not an error situation
             os.kill(self.parent_pid, signal.SIGUSR1)
             # Kill itself
@@ -243,7 +242,7 @@ class ForkLoop(object):
         self.exit = True
 
         if self.isChildAlive():
-            print "Parent dying. Killing child first."
+            errline("Parent dying. Killing child first.")
             self._killChild()
 
     def _childExitHandler(self):

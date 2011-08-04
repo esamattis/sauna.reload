@@ -3,7 +3,7 @@ Changelog
 
 0.2.1 - 2011-08-XX - unreleased
 ------------------
-- Add IForkedChildIsReady event and move INewChildForked event
+- Add INewChildIsReady event and move INewChildForked event
 
 
 0.2.0 - 2011-08-04

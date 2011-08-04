@@ -21,6 +21,11 @@
 # along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
+
+def errline(msg=""):
+    sys.stderr.write(str(msg) + "\n")
+
 
 class ReloadPaths(object):
 
@@ -42,6 +47,8 @@ class ReloadPaths(object):
         return list(self.paths)
 
     def findEggPaths(self):
+
+        # TODO: could read directly from configure objects.
         egg_paths = []
 
         for path in self.paths:

@@ -28,6 +28,7 @@ from pkgutil import ImpLoader
 
 from sauna.reload import autoinclude, fiveconfigure
 
+PATCHED = False
 
 class MonkeyPatchingLoader(ImpLoader):
     """Lucky for us ZConfig will use PEP 302 module hooks to load this file,
@@ -36,6 +37,7 @@ class MonkeyPatchingLoader(ImpLoader):
 
     Thanks to Martijn Pieters for teaching us this trick."""
 
+
     def __init__(self, module):
         name = module.__name__
         path = os.path.dirname(module.__file__)
@@ -43,6 +45,8 @@ class MonkeyPatchingLoader(ImpLoader):
         ImpLoader.__init__(self, name, None, path, description)
 
     def get_data(self, pathname):
+        global PATCHED
+        PATCHED = True
         if os.path.split(pathname) == (self.filename, "component.xml"):
             from sauna.reload import reload_paths
             if reload_paths:
