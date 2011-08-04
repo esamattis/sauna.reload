@@ -111,30 +111,14 @@ installed before the fork loop or there would be no speed difference between
 of plone.app.form to the end of boot up process. You would have to remove the
 dependency from CMFPlone for development to make it work...
 
-
 Also because the product installation order is altered you may find some issues
 if your product does something funky on installation or at import time.
 
+Currently only FileStorage (ZODB) is supported.
 
-Known issues
-============
-
-* Currently only FileStorage (ZODB) is supported
-
-* The watcher (watchdog) does not compile on OS X Lion 10.7. Snowleopard is
-  fine
-
-
-Report new issues at:
+Please, report issues at:
 https://github.com/epeli/sauna.reload/issues.
 
-
-TODOs
-=====
-
-* Test it!
-
-* Find out the limitations
 
 
 Debugging with ``sauna.reload``
@@ -167,7 +151,9 @@ Authors
 The logo was originally the logo of Sauna Sprint 2011 and it was created by
 Vilmos Somogyi.
 
-
 300 kg of beer was consumed to create this package (at least). Also several
 kilos of firewood, one axe, one chainsaw and one boat.
+
+
+We still need testers and contributors. You are very welcome!
 
