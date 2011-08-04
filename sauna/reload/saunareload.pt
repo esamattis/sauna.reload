@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>sauna.reload</title>
+</head>
+<body>
+<h1>sauna.reload</h1>
+
+<p>Parent PID: <span tal:content="view/forkloop/parent_pid"></span></p>
+<p>Child PID: <span tal:content="view/getChildPid"></span></p>
+
+
+
+<h2>Packages marked for reload</h2>
+
+<ul>
+  <li tal:repeat="path view/reload_paths/findEggPaths"
+      tal:content="path"></li>
+</ul>
+
+
+<h2>Reloading</h2>
+
+<form action="" method="get" accept-charset="utf-8">
+<input type="hidden" name="fork" value="true">
+
+<p><input type="submit" value="Reload"></p>
+
+</form>
+
+
+<p>
+Usually you don't have use this button for reloading, because the watcher
+thread does it automatically when it detects changes in your development files.
+
+<p>
+Note that this page does not load again when you click this button. That's
+normal and expected.
+</p>
+
+<p>
+Also we cannot show reloading errors here. Check your terminal prompt for
+those.
+</p>
+
+<h2>Links</h2>
+
+
+<ul>
+
+  <li><a href="http://github.com/epeli/sauna.reload">Source Code</a></li>
+  <li><a href="http://pypi.python.org/pypi/sauna.reload/">PyPI</a></li>
+
+</ul>
+
+</body>
+</html>

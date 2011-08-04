@@ -49,6 +49,9 @@ class ForkLoop(object):
         self.boot_started = None
         self.child_started = None
 
+    def isChild(self):
+        return self.child_pid == 0
+
     def startBootTimer(self):
         if not self.boot_started:
             self.boot_started = time.time()
@@ -57,12 +60,18 @@ class ForkLoop(object):
         self.child_started = time.time()
 
     def isChildAlive(self):
-        if not self.child_pid:
-            return False
-        return os.path.exists("/proc/%i" % self.child_pid)
+
+        if self.isChild():
+            return True
+
+        return (self.child_pid is not None
+            and os.path.exists("/proc/%i" % self.child_pid))
 
     def _scheduleFork(self, signum=None, frame=None):
         self.fork = True
+
+    def _childIsGoingToDie(self, signum=None, frame=None):
+        self.killed_child = True
 
     def start(self):
         """
@@ -74,6 +83,7 @@ class ForkLoop(object):
         # SIGCHLD tells us that child process has really died and we can spawn
         # new child
         signal.signal(signal.SIGCHLD, self._waitChildToDieAndScheduleNew)
+        signal.signal(signal.SIGUSR1, self._childIsGoingToDie)
 
         print "Fork loop starting on process", os.getpid()
         while True:
@@ -83,6 +93,7 @@ class ForkLoop(object):
                 self.fork = False
 
                 if self.pause:
+                    print "Pause mode, fork canceled"
                     continue
 
                 if not self.killed_child:
@@ -154,16 +165,12 @@ class ForkLoop(object):
             print "No killing yet. Not started child yet"
             return
 
-        if self.child_pid == 0:
-            print "Cannot kill from child!"
-            return
-
 
         self.pause = False
 
-        if not self.killed_child:
+        if not self.killed_child or self.isChild():
             print "sending SIGINT to child"
-            os.kill(self.child_pid, signal.SIGINT)
+            self._killChild()
         else:
             # Ok, we already have sent the SIGINT the child, but asking for new child
             print "Not sending SIGINT because we already killed the child. Just scheduling new fork."
@@ -171,6 +178,16 @@ class ForkLoop(object):
 
         self.killed_child = True
 
+
+    def _killChild(self):
+        if self.isChild():
+            print "Killing from child. Kill itself"
+            # Signal parent that this is requested kill, not an error situation
+            os.kill(self.parent_pid, signal.SIGUSR1)
+            # Kill itself
+            os.kill(os.getpid(), signal.SIGINT)
+        else:
+            os.kill(self.child_pid, signal.SIGINT)
 
     def _exitHandler(self):
         """

@@ -1,9 +1,20 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
 
   <subscriber
       for="zope.processlifetime.IProcessStarting"
       handler=".eventhandlers.startForkLoop"
       />
+
+
+  <browser:page
+    name="saunareload"
+    for="OFS.interfaces.IApplication"
+    permission="zope2.ViewManagementScreens"
+    class=".browser.SaunaReload"
+    template="saunareload.pt"
+    />
+
 
 </configure>

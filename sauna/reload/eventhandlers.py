@@ -22,6 +22,9 @@
 
 import time
 
+from ZServer.HTTPServer import zhttp_server
+from App.config import getConfiguration
+
 from sauna.reload import autoinclude, forkloop, reload_paths, watcher
 
 
@@ -44,7 +47,15 @@ def startForkLoop(event):
     # overrides for dependencies of the deferred development packages.
     autoinclude.include_deferred_deps()
 
+    config = getConfiguration()
+    zserver = [server for server in config.servers
+        if isinstance(server, zhttp_server)][0]
+
     print "We saved at least %s seconds from boot up time"\
         % (time.time() - forkloop.boot_started)
+
+    print ("Packages marked for reload are listed in here: "
+        "http://127.0.0.1:%i/@@saunareload" % (zserver.port))
+
     forkloop.start()
 
