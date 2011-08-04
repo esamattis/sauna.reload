@@ -96,8 +96,19 @@ manually reload code
 Events
 ------
 
-``sauna.reload`` emits ``sauna.reload.events.INewChildForked`` events always
-when new child is forked. Hook your notifications or reload extensions to it.
+``sauna.reload`` emits couple of events during reloading.
+
+   sauna.reload.events.INewChildForked
+
+Emited immediately after new process is forked. No development packages have
+been yet installed.  Useful if you want to do something before your code gets
+loaded.  Note that you cannot listen this event on a package that is marked for
+reloading as it is not yet installed when this is fired.
+
+   sauna.reload.events.IForkedChildIsReady
+
+Emitted when all the development packages has been installed to the new forked
+child.  Useful for notifications etc.
 
 
 Limitations

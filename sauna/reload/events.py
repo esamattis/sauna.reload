@@ -26,10 +26,34 @@ from zope.interface import Interface, implements
 
 class INewChildForked(Interface):
     """
-    Emited when new child has been forked and products are installed to it
+    Emited immediately after new process is forked. No development packages
+    have been yet installed.
+
+    Useful if you want to do something before your code gets loaded.
+
+    Note that you cannot listen this event on a package that is marked for
+    reloading as it is not yet installed when this is fired.
     """
 
-class NewChildForked(object):
-       implements(INewChildForked)
 
+class IForkedChildIsReady(Interface):
+    """
+    Emitted when all the development packages has been installed to the new
+    forked child.
+
+    Useful for notifications etc.
+    """
+
+
+class NewChildForked(object):
+    implements(INewChildForked)
+
+    def __init__(self, forkloop):
+        self.forkloop = forkloop
+
+class ForkedChildIsReady(object):
+    implements(IForkedChildIsReady)
+
+    def __init__(self, forkloop):
+        self.forkloop = forkloop
 

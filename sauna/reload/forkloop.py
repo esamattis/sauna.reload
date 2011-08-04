@@ -34,7 +34,7 @@ registerHandler = Signals.SignalHandler.SignalHandler.registerHandler
 
 from sauna.reload import autoinclude, fiveconfigure
 from sauna.reload.db import FileStorageIndex
-from sauna.reload.events import NewChildForked
+from sauna.reload.events import NewChildForked, ForkedChildIsReady
 
 
 class ForkLoop(object):
@@ -158,9 +158,15 @@ class ForkLoop(object):
 
             time.sleep(1)
 
+
         self._prepareNewChild()
-        notify(NewChildForked())
+
         self.forking = False
+
+        print "Booted up new new child in %s seconds. Pid %s" % (
+            time.time() - self.child_started, os.getpid())
+
+        notify(ForkedChildIsReady(self))
 
     def _prepareNewChild(self):
         """
@@ -179,11 +185,12 @@ class ForkLoop(object):
 
         self.storage_index.restore()
 
+        print "NOTIFYING"
+        notify(NewChildForked(self))
+
         autoinclude.include_deferred()
         fiveconfigure.install_deferred()
 
-        print "Booted up new new child in %s seconds. Pid %s" % (
-            time.time() - self.child_started, os.getpid())
 
     def spawnNewChild(self):
         """
