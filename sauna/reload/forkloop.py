@@ -29,6 +29,9 @@ import atexit
 from zope.event import notify
 from App.config import getConfiguration
 
+import Signals.SignalHandler
+registerHandler = Signals.SignalHandler.SignalHandler.registerHandler
+
 from sauna.reload import autoinclude, fiveconfigure
 from sauna.reload.db import FileStorageIndex
 from sauna.reload.events import NewChildForked
@@ -43,6 +46,7 @@ class ForkLoop(object):
         self.pause = False
         self.killed_child = True
         self.forking = False
+        self.exit = False
 
         self.parent_pid = os.getpid()
         self.child_pid = None
@@ -94,13 +98,15 @@ class ForkLoop(object):
 
         # SIGCHLD tells us that child process has really died and we can spawn
         # new child
-        signal.signal(signal.SIGCHLD, self._waitChildToDieAndScheduleNew)
+        registerHandler(signal.SIGCHLD, self._waitChildToDieAndScheduleNew)
 
         # With SIGUSR1 child can tell that it dies by request, not by exception
         # etc.
-        signal.signal(signal.SIGUSR1, self._childIsGoingToDie)
+        registerHandler(signal.SIGUSR1, self._childIsGoingToDie)
 
         self.loop()
+
+
 
 
     def loop(self):
@@ -108,11 +114,17 @@ class ForkLoop(object):
         Magic happens here
         """
 
+        registerHandler(signal.SIGINT, self._parentExitHandler)
+        registerHandler(signal.SIGTERM, self._parentExitHandler)
+
         self.active = True
 
         print "Fork loop starting on process", os.getpid()
         while True:
             self.forking = False
+
+            if self.exit:
+                return
 
             if self.fork:
                 self.fork = False
@@ -158,7 +170,7 @@ class ForkLoop(object):
 
         # Register exit listener. We cannot immediately spawn new child when we
         # get a modified event. Must wait that child has closed database etc.
-        atexit.register(self._exitHandler)
+        atexit.register(self._childExitHandler)
 
         # Make sure that PID files and locks stay here, because dying child
         # will clear them.
@@ -217,7 +229,17 @@ class ForkLoop(object):
         else:
             os.kill(self.child_pid, signal.SIGINT)
 
-    def _exitHandler(self):
+    def _parentExitHandler(self, signum=None, frame=None):
+        if self.isChild():
+            return
+
+        self.exit = True
+
+        if self.isChildAlive():
+            print "Parent dying. Killing child first."
+            self._killChild()
+
+    def _childExitHandler(self):
         """
         STEP 2 (child): Child is about to die. Fix DB.
         """
@@ -225,7 +247,7 @@ class ForkLoop(object):
         self.storage_index.save()
 
 
-    def _waitChildToDieAndScheduleNew(self, signal, frame):
+    def _waitChildToDieAndScheduleNew(self, signal=None, frame=None):
         """
         STEP 3 (parent): Child told us via SIGCHLD that we can spawn new child
         """
