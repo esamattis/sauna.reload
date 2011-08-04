@@ -12,10 +12,28 @@ Introduction
 ``sauna.reload`` is an attempt to recreate ``plone.reload`` without the issues
 it has. Like being unable to reload new grokked views or portlet code.
 
+It can currently reload following:
+
+*  Portlets
+
+*  Schema Interface changes
+
+*  Adapters
+
+*  Meta programming magic
+
+*  ZCML
+
+* Translations (changes in PO files)
+
+* etc.
+
+
 ``sauna.reload`` does reloading by using a fork loop. So actually it does not
 reload the code, but restarts small part of Zope2.
 
-It does following on Zope2 startup:
+
+``sauna.reload`` does following on Zope2 startup:
 
 1. Defers loading of your development packages by hooking into PEP 302 loader
    and changing their ``z3c.autoinclude`` target module
@@ -40,6 +58,13 @@ non-developed dependencies of your development packages (resolved by
 to see the changes in ZODB (by loading the saved index)
 
 8. GOTO 4
+
+
+This means that reloading Core Plone packages is tricky (or impossible?),
+because ``sauna.reload`` defers loading of the development packages to the end
+of Zope2 boot up process. For example plone.app.form is depended by CMFPlone
+and CMFPlone really must be installed before the fork loop. So we cannot defer
+the installation of plone.app.form to the end of boot up process.
 
 
 Installing
@@ -74,6 +99,13 @@ manually reload code
    http://127.0.0.1:8080/@@saunareload
 
 
+Events
+------
+
+``sauna.reload`` emits ``sauna.reload.events.INewChildForked`` events always
+when new child is forked. Hook your notifications of reload extensions to it.
+
+
 Known issues
 ============
 
@@ -82,7 +114,6 @@ Known issues
 * The watcher (watchdog) does not compile on OS X Lion 10.7. Snowleopard is
   fine
 
-* Reloading of Plone core packages is very tricky
 
 TODOs
 =====
