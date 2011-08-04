@@ -4,6 +4,7 @@ Changelog
 0.2.1 - 2011-08-XX - unreleased
 ------------------
 - Add INewChildIsReady event and move INewChildForked event
+- Remove overly used prints and use logging
 
 
 0.2.0 - 2011-08-04
