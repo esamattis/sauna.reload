@@ -3,14 +3,13 @@
 *sauna.reload: so that you can finish your Plone development today and relax in
 sauna after calling it a day*
 
-Please, see `Known Issues`_ and `TODOs`_. Report new issues at:
-https://github.com/epeli/sauna.reload/issues.
 
 Introduction
 ============
 
 ``sauna.reload`` is an attempt to recreate ``plone.reload`` without the issues
-it has. Like being unable to reload new grokked views or portlet code.
+it has. Like being unable to reload new grokked views or portlet code. This
+project was on Plone Sauna Sprint 2011. There for the name, ``sauna.reload``.
 
 It can currently reload following:
 
@@ -126,6 +125,10 @@ Known issues
   fine
 
 
+Report new issues at:
+https://github.com/epeli/sauna.reload/issues.
+
+
 TODOs
 =====
 
@@ -160,5 +163,11 @@ Authors
 
 * Andreas Jung (approved in IRC)
 
+
+The logo was originally the logo of Sauna Sprint 2011 and it was created by
+Vilmos Somogyi.
+
+
 300 kg of beer was consumed to create this package (at least). Also several
 kilos of firewood, one axe, one chainsaw and one boat.
+
