@@ -60,15 +60,6 @@ reload the code, but restarts small part of Zope2.
 8. GOTO 4
 
 
-This means that reloading Core Plone packages is tricky (or impossible?),
-because ``sauna.reload`` defers loading of the development packages to the end
-of Zope2 boot up process. For example plone.app.form is depended by CMFPlone
-and CMFPlone really must be installed before the fork loop or there would be no
-speed difference between ``sauna.reload`` and normal Plone restart.  So we
-cannot defer the installation of plone.app.form to the end of boot up process.
-You would have to remove the dependency from CMFPlone for development to make
-it work...
-
 
 
 Installing
@@ -108,6 +99,22 @@ Events
 
 ``sauna.reload`` emits ``sauna.reload.events.INewChildForked`` events always
 when new child is forked. Hook your notifications of reload extensions to it.
+
+
+Limitations
+-----------
+
+Defering installation of development packages to the end of Plone boot up
+process means that reloading of Core Plone packages is tricky (or impossible?).
+For example plone.app.form is depended by CMFPlone and CMFPlone really must be
+installed before the fork loop or there would be no speed difference between
+``sauna.reload`` and normal Plone restart. So we cannot defer the installation
+of plone.app.form to the end of boot up process. You would have to remove the
+dependency from CMFPlone for development to make it work...
+
+
+Also because the product installation order is altered you may find some issues
+if your product does something funky on installation or at import time.
 
 
 Known issues
