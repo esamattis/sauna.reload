@@ -41,9 +41,9 @@ reload the code, but restarts small part of Zope2.
 2. Starts a watcher thread which monitors changes in your development py-files
 
 3. Stops loading of Zope2 in ``zope.processlifetime.IProcessStarting`` event by
-stepping into a infinite loop; Just before this, tries to load all
-non-developed dependencies of your development packages (resolved by
-``z3c.autoinclude``)
+   stepping into a infinite loop; Just before this, tries to load all
+   non-developed dependencies of your development packages (resolved by
+   ``z3c.autoinclude``)
 
 4. It forks a new child and lets it pass the loop
 
@@ -55,7 +55,7 @@ non-developed dependencies of your development packages (resolved by
    the parent to fork new a child when it is just about to close itself
 
 7. Just before dying, the child saves ``Data.fs.index`` to help the new child
-to see the changes in ZODB (by loading the saved index)
+   to see the changes in ZODB (by loading the saved index)
 
 8. GOTO 4
 
@@ -63,8 +63,12 @@ to see the changes in ZODB (by loading the saved index)
 This means that reloading Core Plone packages is tricky (or impossible?),
 because ``sauna.reload`` defers loading of the development packages to the end
 of Zope2 boot up process. For example plone.app.form is depended by CMFPlone
-and CMFPlone really must be installed before the fork loop. So we cannot defer
-the installation of plone.app.form to the end of boot up process.
+and CMFPlone really must be installed before the fork loop or there would be no
+speed difference between ``sauna.reload`` and normal Plone restart.  So we
+cannot defer the installation of plone.app.form to the end of boot up process.
+You would have to remove the dependency from CMFPlone for development to make
+it work...
+
 
 
 Installing
