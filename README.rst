@@ -23,9 +23,9 @@ It does following on Zope2 startup:
 2. Starts a watcher thread which monitors changes in your development py-files
 
 3. Stops loading of Zope2 in ``zope.processlifetime.IProcessStarting`` event by
-   stepping into a infinite loop; Just before this, tries to load all
-   non-developed dependencies of your development packages (resolved by
-   ``z3c.autoinclude``)
+stepping into a infinite loop; Just before this, tries to load all
+non-developed dependencies of your development packages (resolved by
+``z3c.autoinclude``)
 
 4. It forks a new child and lets it pass the loop
 
@@ -36,8 +36,8 @@ It does following on Zope2 startup:
    files it will signal the child to shutdown and the child will signal
    the parent to fork new a child when it is just about to close itself
 
-7. Just before dying, the child saves ``Data.fs.index`` to help the new child to
-   see the changes in ZODB (by loading the saved index)
+7. Just before dying, the child saves ``Data.fs.index`` to help the new child
+to see the changes in ZODB (by loading the saved index)
 
 8. GOTO 4
 
@@ -82,7 +82,7 @@ Known issues
 * The watcher (watchdog) does not compile on OS X Lion 10.7. Snowleopard is
   fine
 
-* Reloading of code packages is very tricky
+* Reloading of Plone core packages is very tricky
 
 TODOs
 -----
