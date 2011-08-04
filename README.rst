@@ -98,7 +98,7 @@ Events
 ------
 
 ``sauna.reload`` emits ``sauna.reload.events.INewChildForked`` events always
-when new child is forked. Hook your notifications of reload extensions to it.
+when new child is forked. Hook your notifications or reload extensions to it.
 
 
 Limitations
