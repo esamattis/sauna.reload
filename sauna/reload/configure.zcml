@@ -3,7 +3,7 @@
 
   <subscriber
       for="zope.processlifetime.IProcessStarting"
-      handler=".events.startForkLoop"
+      handler=".eventhandlers.startForkLoop"
       />
 
 </configure>

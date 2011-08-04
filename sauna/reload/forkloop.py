@@ -25,8 +25,11 @@ import os
 import signal
 import atexit
 
+from zope.event import notify
+
 from sauna.reload import autoinclude, fiveconfigure
 from sauna.reload.db import FileStorageIndex
+from sauna.reload.events import NewChildForked
 
 
 class ForkLoop(object):
@@ -96,6 +99,7 @@ class ForkLoop(object):
             time.sleep(1)
 
         self._prepareNewChild()
+        notify(NewChildForked())
 
     def _prepareNewChild(self):
         """
