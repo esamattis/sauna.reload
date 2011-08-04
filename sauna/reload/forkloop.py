@@ -40,6 +40,7 @@ class ForkLoop(object):
         self.active = False
         self.pause = False
         self.killed_child = True
+        self.forking = False
 
         self.parent_pid = os.getpid()
         self.child_pid = None
@@ -55,6 +56,10 @@ class ForkLoop(object):
     def startChildBooTimer(self):
         self.child_started = time.time()
 
+    def isChildAlive(self):
+        if not self.child_pid:
+            return False
+        return os.path.exists("/proc/%i" % self.child_pid)
 
     def _scheduleFork(self, signum=None, frame=None):
         self.fork = True
@@ -72,6 +77,7 @@ class ForkLoop(object):
 
         print "Fork loop starting on process", os.getpid()
         while True:
+            self.forking = False
 
             if self.fork:
                 self.fork = False
@@ -90,6 +96,12 @@ class ForkLoop(object):
                     self.pause = True
                     continue
 
+
+                if self.isChildAlive():
+                    print "Child %i is still alive. Waiting it to die." % self.child_pid
+                    continue
+
+                self.forking = True
                 self.startChildBooTimer()
                 self.child_pid = os.fork()
                 if self.child_pid == 0:
@@ -100,6 +112,7 @@ class ForkLoop(object):
 
         self._prepareNewChild()
         notify(NewChildForked())
+        self.forking = False
 
     def _prepareNewChild(self):
         """
@@ -133,9 +146,9 @@ class ForkLoop(object):
             print "Loop not started yet"
             return
 
-        # if self.killed_child:
-        #     print "Child already killed"
-        #     return
+        if self.forking:
+            print "Serious forking action is already going on. Cannot fork now."
+            return
 
         if self.child_pid is None:
             print "No killing yet. Not started child yet"
@@ -152,7 +165,7 @@ class ForkLoop(object):
             print "sending SIGINT to child"
             os.kill(self.child_pid, signal.SIGINT)
         else:
-            # Ok, we already have killed the child, but asking for new child
+            # Ok, we already have sent the SIGINT the child, but asking for new child
             print "Not sending SIGINT because we already killed the child. Just scheduling new fork."
             self._scheduleFork()
 
