@@ -44,10 +44,12 @@ class MonkeyPatchingLoader(ImpLoader):
 
     def get_data(self, pathname):
         if os.path.split(pathname) == (self.filename, "component.xml"):
-            # 1) Defer autoinclude of packages found under reload paths.
-            autoinclude.defer_paths()
-            # 2) Prevent Five from finding packages under reload paths.
-            fiveconfigure.defer_install()
+            from sauna.reload import reload_paths
+            if reload_paths:
+                # 1) Defer autoinclude of packages found under reload paths.
+                autoinclude.defer_paths()
+                # 2) Prevent Five from finding packages under reload paths.
+                fiveconfigure.defer_install()
             # 3) Return dummy config to keep Zope happy.
             return "<component></component>"
         return super(MonkeyPatchingLoader, self).get_data(self, pathname)
