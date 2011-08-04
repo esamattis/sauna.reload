@@ -5,7 +5,9 @@
     <include package="Products.Five" />
 
     <five:loadProducts file="meta.zcml"/>
+
     <five:loadProducts />
+
     <five:loadProductsOverrides />
 
 </configure>

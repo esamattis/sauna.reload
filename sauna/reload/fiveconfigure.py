@@ -22,65 +22,67 @@
 
 """Utilities for deferring loading of developed eggs"""
 
-
-from pkg_resources import iter_entry_points
-
-from sauna.reload import autoinclude
+from Zope2.App.zcml import load_config
 
 
 def findProducts():
+    """Do not find products under sauna.reload's reload paths"""
     import Products
     from types import ModuleType
     from sauna.reload import reload_paths
     products = []
-    deferred = [ep.dist.project_name
-                for ep in iter_entry_points("z3c.autoinclude.plugin")
-                if ep.module_name == autoinclude.DEFERRED_TARGET]
     for name in dir(Products):
         product = getattr(Products, name)
         if isinstance(product, ModuleType) and hasattr(product, "__file__"):
-            # Find only those products, which are under some reload path.
-            # XXX: Because ``sauna.reload`` doesn't have full Five-support yet,
-            # we select (or deselect) only those, which support autoinclude.
-            if not getattr(product, "__file__") in reload_paths\
-                and product.__name__ not in deferred:
+            # Do not find products under sauna.reload's reload paths
+            if not getattr(product, "__file__") in reload_paths:
                 products.append(product)
     return products
 
 
 def findDeferredProducts():
+    """Find only those products, which are under some reload path"""
     import Products
     from types import ModuleType
     from sauna.reload import reload_paths
     products = []
-    deferred = [ep.dist.project_name
-                for ep in iter_entry_points("z3c.autoinclude.plugin")
-                if ep.module_name == autoinclude.DEFERRED_TARGET]
     for name in dir(Products):
         product = getattr(Products, name)
         if isinstance(product, ModuleType) and hasattr(product, "__file__"):
-            # Find only those products, which are under some reload path.
-            if getattr(product, "__file__") in reload_paths\
-                and product.__name__ in deferred:
+            # Find only products under sauna.reload's reload paths
+            if getattr(product, "__file__") in reload_paths:
                 products.append(product)
     return products
 
 
 def defer_install():
+    # Patch fiveconfigure with findProducts unable to see reloaded paths
     import Products.Five.fiveconfigure
     setattr(Products.Five.fiveconfigure, "findProducts", findProducts)
 
 
 def install_deferred():
-    pass  # Not yet implemented
-    # import Products.Five.fiveconfigure
-    # from sauna.reload import fiveconfiguretools
-    # setattr(Products.Five.fiveconfigure, "findProducts",
-    #         fiveconfiguretools.findDeferredProducts)
-    # setattr(Products.Five.fiveconfigure, "findProducts",
-    #         fiveconfiguretools.findProducts)
-    # TODO: Find out why developed Five-products were not
-    # added into Products._packages_to_initialize.
-    # TODO: run install_package for every package added
-    # to Products._packages_to_initialize, which are not
-    # yet installed.
+    # Temporarily patch fiveconfigure with findProducts able to see only
+    # products under reload paths and execute Five configuration directives
+    import sauna.reload
+    import Products.Five.fiveconfigure
+    setattr(Products.Five.fiveconfigure, "findProducts", findDeferredProducts)
+    load_config("fiveconfigure.zcml", sauna.reload)
+    setattr(Products.Five.fiveconfigure, "findProducts", findProducts)
+
+    # Five adds pushes old-style product initializations into
+    # Products._packages_to_initialize-list. We must loop through that list for
+    # our reloaded packages and try to install them.
+    import Products
+    from App.config import getConfiguration
+    from OFS.Application import install_package
+    from Zope2.App.startup import app
+    # FIXME: Is this really the only way to get our app-object?
+    app = app()  # XXX: Help! Should we use use app._p_jar-stuff around here?
+    debug_mode = getConfiguration().debug_mode
+    from sauna.reload import reload_paths
+    for module, init_func in getattr(Products, "_packages_to_initialize", []):
+        if getattr(module, "__file__") in reload_paths:
+            install_package(app, module, init_func, raise_exc=debug_mode)
+    if hasattr(Products, "_packages_to_initialize"):
+        del Products._packages_to_initialize
