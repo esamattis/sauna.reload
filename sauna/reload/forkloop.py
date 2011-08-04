@@ -132,6 +132,7 @@ class ForkLoop(object):
                 self.fork = False
 
                 if self.pause:
+                    # Pause mode. No forks now.
                     continue
 
                 if not self.killed_child:
@@ -147,6 +148,8 @@ class ForkLoop(object):
                     continue
 
                 if self.isChildAlive():
+                    # Child is still alive for some reason. Lets wait few
+                    # rounds for it to die.
                     continue
 
                 self.forking = True
