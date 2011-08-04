@@ -70,9 +70,9 @@ def install_deferred():
     load_config("fiveconfigure.zcml", sauna.reload)
     setattr(Products.Five.fiveconfigure, "findProducts", findProducts)
 
-    # Five adds pushes old-style product initializations into
-    # Products._packages_to_initialize-list. We must loop through that list for
-    # our reloaded packages and try to install them.
+    # Five pushes old-style product initializations into
+    # Products._packages_to_initialize-list. We must loop through that list
+    # for our reloaded packages and try to install them.
     import Products
     from App.config import getConfiguration
     from OFS.Application import install_package
