@@ -7,7 +7,7 @@ Please, see `Known Issues`_ and `TODOs`_. Report new issues at:
 https://github.com/epeli/sauna.reload/issues.
 
 Introduction
-------------
+============
 
 ``sauna.reload`` is an attempt to recreate ``plone.reload`` without the issues
 it has. Like being unable to reload new grokked views or portlet code.
@@ -43,7 +43,7 @@ to see the changes in ZODB (by loading the saved index)
 
 
 Installing
-----------
+==========
 
 Add this package to your buildout eggs and add following
 ``zope-conf-additional`` line  to you instance part of buildout.cfg::
@@ -55,7 +55,7 @@ Add this package to your buildout eggs and add following
 
 
 Using
------
+=====
 
 Fork loop is not active by default. You can activate it by setting
 ``RELOAD_PATH`` environment variable to your development product path(s). In
@@ -75,7 +75,7 @@ manually reload code
 
 
 Known issues
-------------
+============
 
 * Currently only FileStorage (ZODB) is supported
 
@@ -85,7 +85,7 @@ Known issues
 * Reloading of Plone core packages is very tricky
 
 TODOs
------
+=====
 
 * Test it!
 
@@ -93,7 +93,7 @@ TODOs
 
 
 Debugging with ``sauna.reload``
--------------------------------
+===============================
 
 Regular ``import pdb; pdb.set_trace()`` will work just fine with
 ``sauna.reload``. When reload happens while in pdb, though, pdb will get
@@ -108,7 +108,7 @@ your pdb, you may add the following to your ``~/.pdbrc``::
 
 
 Authors
--------
+=======
 
 * Esa-Matti Suuronen (esa-matti aet suuronen.org)
 
