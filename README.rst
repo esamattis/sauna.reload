@@ -72,9 +72,7 @@ your development products::
 Known issues
 ------------
 
-* Currently reloading is limited to new style z3c.autoincluded Python packages
-  and does not cover old-style Products.XXX namespaced packages or
-  Five-packages (e.g. does not reload Archetypes yet)
+* Does not reload products directly under old-school Products/-directory.
 
 * Currently only FileStorage (ZODB) is supported
 
@@ -85,13 +83,9 @@ Known issues
 TODOs
 -----
 
-* Be able to reload oldschool (Products.XXX and Five) packages too
-
 * Test it!
 
 * Find out the limitations
-
-* Document why it is hard to reload plone core packages
 
 
 Authors

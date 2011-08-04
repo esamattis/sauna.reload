@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.0 - unreleased
+------------------
+
+- Support for Five-initialized products (e.g. Archetypes).
+
 0.1.1 - 2011-08-03
 ------------------
 
