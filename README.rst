@@ -77,6 +77,7 @@ Known issues
 * The watcher (watchdog) does not compile on OS X Lion 10.7. Snowleopard is
   fine
 
+* Reloading of code packages is very tricky
 
 TODOs
 -----
