@@ -36,7 +36,7 @@ class INewChildForked(Interface):
     """
 
 
-class IForkedChildIsReady(Interface):
+class INewChildIsReady(Interface):
     """
     Emitted when all the development packages has been installed to the new
     forked child.
@@ -51,8 +51,8 @@ class NewChildForked(object):
     def __init__(self, forkloop):
         self.forkloop = forkloop
 
-class ForkedChildIsReady(object):
-    implements(IForkedChildIsReady)
+class NewChildIsReady(object):
+    implements(INewChildIsReady)
 
     def __init__(self, forkloop):
         self.forkloop = forkloop
