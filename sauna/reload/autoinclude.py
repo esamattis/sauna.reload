@@ -27,6 +27,12 @@ from pkg_resources import iter_entry_points
 from z3c.autoinclude.dependency import DependencyFinder
 from Zope2.App.zcml import load_config, load_string
 
+import os
+from pkg_resources import get_provider
+from zope.dottedname.resolve import resolve
+from z3c.autoinclude.utils import DistributionManager
+from z3c.autoinclude.utils import ZCMLInfo
+
 DEFERRED_TARGET = "sauna.reload"
 
 
@@ -50,12 +56,35 @@ def get_deferred_deps_info():
     # is an example of a dependency, whose ``configure.zcml`` will not run in
     # Plone environment. Some better solution than just a blacklist would be
     # welcome.
-    deps = {"meta.zcml": [], "configure.zcml": [], "overrides.zcml": []}
+    deferred = []
+    from sauna.reload import reload_paths
+    for ep in iter_entry_points("z3c.autoinclude.plugin"):
+        if ep.dist.location in reload_paths\
+            and ep.module_name == DEFERRED_TARGET:
+            deferred.append(ep.dist.project_name)
+    zcml_to_look_for = ("meta.zcml", "configure.zcml", "overrides.zcml")
+    deps = ZCMLInfo(zcml_to_look_for)
     for ep in iter_entry_points("z3c.autoinclude.plugin"):
         if ep.module_name == DEFERRED_TARGET:
             deferred.append(ep.dist.project_name)
-            info = DependencyFinder(ep.dist).includableInfo(
-                ["meta.zcml", "configure.zcml", "overrides.zcml"])
+            # XXX: We cannot call DependencyFinder(ep.dist).includableInfo,
+            # because it eventually imports also our development packages while
+            # resolving existence of ``zcml_to_look_for``.
+            finder = DependencyFinder(ep.dist)
+            info = ZCMLInfo(zcml_to_look_for)
+            for req in finder.context.requires():
+                dist_manager = DistributionManager(get_provider(req))
+                for dotted_name in dist_manager.dottedNames():
+                    # XXX: We assume that there's only one product in a
+                    # distribution egg (dotted_name == egg_name).
+                    if dotted_name in deferred:
+                        continue
+                    module = resolve(dotted_name)
+                    for candidate in zcml_to_look_for:
+                        candidate_path = os.path.join(
+                            os.path.dirname(module.__file__), candidate)
+                        if os.path.isfile(candidate_path):
+                            info[candidate].append(dotted_name)
             for key in deps:
                 deps[key].extend(info.get(key, []))
     for key in deps:
