@@ -29,6 +29,7 @@ from Zope2.App.zcml import load_config, load_string
 
 import os
 from pkg_resources import get_provider
+from pkg_resources import working_set as ws
 from zope.dottedname.resolve import resolve
 from z3c.autoinclude.utils import DistributionManager
 from z3c.autoinclude.utils import ZCMLInfo
@@ -56,12 +57,7 @@ def get_deferred_deps_info():
     # is an example of a dependency, whose ``configure.zcml`` will not run in
     # Plone environment. Some better solution than just a blacklist would be
     # welcome.
-    deferred = []
     from sauna.reload import reload_paths
-    for ep in iter_entry_points("z3c.autoinclude.plugin"):
-        if ep.dist.location in reload_paths\
-            and ep.module_name == DEFERRED_TARGET:
-            deferred.append(ep.dist.project_name)
     zcml_to_look_for = ("meta.zcml", "configure.zcml", "overrides.zcml")
     deps = ZCMLInfo(zcml_to_look_for)
     for ep in iter_entry_points("z3c.autoinclude.plugin"):
@@ -73,12 +69,10 @@ def get_deferred_deps_info():
             finder = DependencyFinder(ep.dist)
             info = ZCMLInfo(zcml_to_look_for)
             for req in finder.context.requires():
+                if ws.find(req).location in reload_paths:
+                    continue
                 dist_manager = DistributionManager(get_provider(req))
                 for dotted_name in dist_manager.dottedNames():
-                    # XXX: We assume that there's only one product in a
-                    # distribution egg (dotted_name == egg_name).
-                    if dotted_name in deferred:
-                        continue
                     module = resolve(dotted_name)
                     for candidate in zcml_to_look_for:
                         candidate_path = os.path.join(
