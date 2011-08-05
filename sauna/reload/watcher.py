@@ -33,6 +33,8 @@ from sauna.reload.utils import logger
 
 class Watcher(FileSystemEventHandler):
 
+    allowed_extensions = set(("py", "zcml", "po"))
+
     def __init__(self, paths, forkloop):
         self.forkloop = forkloop
         self.paths = paths
@@ -57,9 +59,10 @@ class Watcher(FileSystemEventHandler):
             obs.stop()
 
     def on_any_event(self, event):
-        if not True in [event.src_path.endswith(s)
-                        for s in [".py", ".zcml", ".po"]]:
+        ext = event.src_path.split(".")[-1].lower()
+        if ext not in self.allowed_extensions:
             return
+
 
         logger.info("Got '%s' event on %s" %
             (event.event_type, event.src_path))
