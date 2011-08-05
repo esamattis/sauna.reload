@@ -31,8 +31,7 @@ It can currently reload following:
 ``sauna.reload`` does reloading by using a fork loop. So actually it does not
 reload the code, but restarts small part of Zope2.
 
-
-``sauna.reload`` does following on Zope2 startup:
+It does following on Zope2 startup:
 
 1. Defers loading of your development packages by hooking into PEP 302 loader
    and changing their ``z3c.autoinclude`` target module
@@ -170,8 +169,7 @@ Authors
 
 * Mikko Ohtamaa (idea)
 
-* Andreas Jung (approved in IRC)
-
+Thanks to all happy hackers on Sauna Sprint 2011!
 
 The logo was originally the logo of Sauna Sprint 2011 and it was created by
 Vilmos Somogyi.
