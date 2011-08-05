@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.2.0'
+version = '0.2.1'
 
 setup(name='sauna.reload',
       version=version,
@@ -14,7 +14,7 @@ setup(name='sauna.reload',
         "Framework :: Plone",
         "Programming Language :: Python",
         ],
-      keywords='plone reload zope2 restart auto',
+      keywords='plone reload zope2 restart developer',
       author='Esa-Matti Suuronen',
       author_email='esa-matti@suuronen.org',
       url='http://github.com/epeli/sauna.reload',
