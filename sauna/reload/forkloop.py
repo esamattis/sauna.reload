@@ -29,8 +29,8 @@ import atexit
 from zope.event import notify
 from App.config import getConfiguration
 
-import Signals.SignalHandler
-registerHandler = Signals.SignalHandler.SignalHandler.registerHandler
+from Signals.SignalHandler import SignalHandler
+registerHandler = SignalHandler.registerHandler
 
 from sauna.reload import autoinclude, fiveconfigure
 from sauna.reload.db import FileStorageIndex

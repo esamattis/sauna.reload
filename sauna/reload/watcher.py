@@ -20,9 +20,13 @@
 # You should have received a copy of the GNU General Public License
 # along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
+import signal
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+
+from Signals.SignalHandler import SignalHandler
+registerHandler = SignalHandler.registerHandler
 
 from sauna.reload.forkloop import CannotSpawnNewChild
 from sauna.reload.utils import logger
@@ -33,15 +37,24 @@ class Watcher(FileSystemEventHandler):
         self.forkloop = forkloop
         self.paths = paths
         FileSystemEventHandler.__init__(self)
+        self.observers = []
 
     def start(self):
         """Start file monitoring thread"""
 
+        registerHandler(signal.SIGINT, self._exitHandler)
+        registerHandler(signal.SIGTERM, self._exitHandler)
+
         for path in self.paths:
             logger.info("Starting file monitor on %s" %  path)
             observer = Observer()
+            self.observers.append(observer)
             observer.schedule(self, path=path, recursive=True)
             observer.start()
+
+    def _exitHandler(self):
+        for obs in self.observers:
+            obs.stop()
 
     def on_any_event(self, event):
         if not True in [event.src_path.endswith(s)
