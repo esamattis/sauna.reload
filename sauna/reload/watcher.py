@@ -21,6 +21,7 @@
 # along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
 
 import signal
+import os
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -66,6 +67,16 @@ class Watcher(FileSystemEventHandler):
 
         logger.info("Got '%s' event on %s" %
             (event.event_type, event.src_path))
+
+        filename = event.src_path.split(os.sep)[-1]
+        if filename == "__init__.py":
+            # TODO: how to detect automatically package root?
+            # TODO: Just fix this issue.
+            logger.warning(
+                "Edited a __init__.py file! If this is the package  root of "
+                "your development package you will need to restart whole Plone! "
+                "see https://github.com/epeli/sauna.reload/issues/6")
+
 
         try:
             self.forkloop.spawnNewChild()
