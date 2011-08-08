@@ -160,6 +160,10 @@ More info
 
 * https://github.com/epeli/sauna.reload/issues/4
 
+Fix
+
+* Build and install https://github.com/gorakhargosh/watchdog manually into your virtual env.
+
 Authors
 =======
 
