@@ -121,7 +121,7 @@ class ForkLoop(object):
 
         self.active = True
 
-        logger.info("Fork loop starting on process %s" % os.getpid())
+        logger.info("Fork loop starting on parent. PID %i" % os.getpid())
         while True:
             self.forking = False
 
@@ -161,13 +161,15 @@ class ForkLoop(object):
 
             time.sleep(1)
 
+        logger.setChildLogger()
+        logger.info("Forked new child. Installing reloadable products...")
 
         self._prepareNewChild()
 
         self.forking = False
 
-        logger.info("Booted up new new child in %s seconds. Pid %s" % (
-            time.time() - self.child_started, os.getpid()))
+        logger.info("Booted up new new child in %s seconds. PID %i" % (
+            time.time() - self.child_started,  os.getpid()))
 
         notify(NewChildIsReady(self))
 
