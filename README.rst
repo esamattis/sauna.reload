@@ -9,7 +9,8 @@ Introduction
 
 ``sauna.reload`` is an attempt to recreate ``plone.reload`` without the issues
 it has. Like being unable to reload new grokked views or portlet code. This
-project was on Plone Sauna Sprint 2011. There for the name, ``sauna.reload``.
+project was started on Plone Sauna Sprint 2011. There for the name,
+``sauna.reload``.
 
 It can currently reload following:
 
