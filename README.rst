@@ -86,6 +86,9 @@ your development products::
 
     $ RELOAD_PATH=src/my.product:src/my.another.product bin/instance fg
 
+But be careful with this. If other products depend on your product it will get
+installed anyways before the fork loop and it will be impossible to reload it.
+
 There is also a view on Zope2 root from which it is possible to
 manually reload code
 
@@ -126,7 +129,7 @@ if your product does something funky on installation or at import time.
 
 Currently only FileStorage (ZODB) is supported.
 
-Please, report issues at:
+Please report any other issues at:
 https://github.com/epeli/sauna.reload/issues.
 
 
