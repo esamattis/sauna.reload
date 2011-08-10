@@ -173,6 +173,13 @@ when Zope starts up::
 
 CTRL+C should terminate Zope normally. There might be stil some kinks and error messages with shutdown.
 
+.. note ::
+
+        Your reloadable eggs must be included using z3c.autoinclude mechanism.
+
+Only eggs loaded through `z3c.autoinclude <http://plone.org/products/plone/roadmap/247>`_.
+can be reloaded. Make sure you don't use buildout.cfg ``zcml =`` directive for your eggs or
+``sauna.reload`` silently ignores changes.
 
 Manual reload
 ---------------
