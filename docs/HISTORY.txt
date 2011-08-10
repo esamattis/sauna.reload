@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.1 - current
+------------------
+
+- Heavily edited readme [miohtama]
+
 0.2.1 - 2011-08-03
 ------------------
 - Add INewChildIsReady event and move INewChildForked event
