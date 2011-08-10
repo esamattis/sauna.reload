@@ -302,6 +302,27 @@ Troubleshooting
 
 Report all issues on `GitHub <https://github.com/epeli/sauna.reload>`_.
 
+My code does not reload properly
+-----------------------------------
+
+You'll see reload process going on in the terminal, but your code is still not loaded.
+
+Make sure your code is hooked into Plone
+through `z3c.autoinclude <http://plone.org/products/plone/roadmap/247>`_.
+
+.. warning::
+
+        If your code egg is referred using zcml = directive in buildout.cfg
+        sauna.reload cannot load it.
+
+* Retrofit your eggs with autoinclude support if needed
+        
+* Remove zcml = lines for your eggs in buildout.cfg
+
+* Rerun buildout (remember bin/buildout -c development.cfg)
+
+* Restart Plone with sauna.reload enabled        
+
 Too many files open on OSX
 -----------------------------
 
@@ -317,6 +338,16 @@ Raising the ulimit of open file handles is not exactly trivial on OSX.
 More info
 
 * https://github.com/epeli/sauna.reload/issues/4
+
+sauna.reload is not active - nothing printed on console
+----------------------------------------------------------
+
+Check that your buildout.cfg includes ``zope-conf-additionalzope-conf-additional``
+line.
+
+If using separate ``development.cfg`` make sure you run your buildout using it::
+
+        bin/buildout -c development.cfg
 
 Source
 =======
