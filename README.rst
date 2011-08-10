@@ -243,7 +243,7 @@ It does following on Zope2 startup:
 
 6. And now every time when the watcher thread detects a change in development
    files it will signal the child to shutdown and the child will signal
-   the parent to fork new a child when it is just about to close itself
+   the parent to fork a new child when it is just about to close itself
 
 7. Just before dying, the child saves ``Data.fs.index`` to help the new child
    to see the changes in ZODB (by loading the saved index)
