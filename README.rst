@@ -52,7 +52,7 @@ Using new buildout file for the development
 This is the recommended approach how to enable ``sauna.reload`` for your development
 environment.
 
-Use git to feacth  ``sauna.reload`` source code to your buildout environment::
+Use git to fetch  ``sauna.reload`` source code to your buildout environment::
 
         cd src
         git clone git://github.com/epeli/sauna.reload.git
@@ -69,11 +69,11 @@ which you can also use on the production server.
         extends = buildout.cfg
         
         develop +=
-                src/sauna.relaod
+                src/sauna.reload
         
         [instance]
         
-        # XXX: May conflict with existing xope-conf-additional directives
+        # XXX: May conflict with existing zope-conf-additional directives
         zope-conf-additional = 
                 %import sauna.reload
                 
@@ -243,7 +243,7 @@ It does following on Zope2 startup:
 
 6. And now every time when the watcher thread detects a change in development
    files it will signal the child to shutdown and the child will signal
-   the parent to fork new a child when it is just about to close itself
+   the parent to fork a new child when it is just about to close itself
 
 7. Just before dying, the child saves ``Data.fs.index`` to help the new child
    to see the changes in ZODB (by loading the saved index)
