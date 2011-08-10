@@ -56,6 +56,6 @@ class FileStorageIndex(object):
                     self.storage._file, self.storage._file_name, index, {},
                     stop="\377" * 8, ltid=ltid, start=start, read_only=False)
                 self.storage._ltid = tid
-                self.storage._ts = tid = TimeStamp(tid)
+                self.storage._ts = TimeStamp(tid)
         finally:
             self.storage._lock_release()
