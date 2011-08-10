@@ -46,14 +46,15 @@ class FileStorageIndex(object):
         try:
             # Load saved ``Data.fs.index`` to see the persistent changes
             # created by the previous child.
-            index, start, ltid = self.storage._restore_index()
+            index, start, ltid =\
+                self.storage._restore_index() or (None, None, None)
             # Sanity check. Last transaction in restored index must match
             # the last transaction given by FileStorage transaction iterator.
-            if ltid == tuple(self.storage.iterator())[-1].tid:
+            if ltid and ltid == tuple(self.storage.iterator())[-1].tid:
                 self.storage._initIndex(index, {})
                 self.storage._pos, self.storage._oid, tid = read_index(
                     self.storage._file, self.storage._file_name, index, {},
-                    stop=None, ltid=ltid, start=start, read_only=False)
+                    stop="\377" * 8, ltid=ltid, start=start, read_only=False)
                 self.storage._ltid = tid
                 self.storage._ts = tid = TimeStamp(tid)
         finally:
