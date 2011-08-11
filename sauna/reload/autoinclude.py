@@ -68,7 +68,7 @@ def get_deferred_deps_info():
             # resolving existence of ``zcml_to_look_for``.
             finder = DependencyFinder(ep.dist)
             info = ZCMLInfo(zcml_to_look_for)
-            for req in finder.context.requires():
+            for req in [r for r in finder.context.requires() if r]:
                 if ws.find(req).location in reload_paths:
                     continue
                 dist_manager = DistributionManager(get_provider(req))
