@@ -30,7 +30,8 @@ from ZODB.FileStorage.FileStorage import read_index
 class FileStorageIndex(object):
 
     def __init__(self, storage):
-        self.storage = storage
+        # Try to get the "real" FileStorage, which could wrapped (in Plone 4.1)
+        self.storage = getattr(storage, "_BlobStorage__storage", storage)
 
     def save(self):
         # Save ``Data.fs.index`` before dying to notify the next child of the
@@ -44,6 +45,8 @@ class FileStorageIndex(object):
     def restore(self):
         self.storage._lock_acquire()
         try:
+            # Get indexes in their pre-fork state
+            index, tindex = (self.storage._index, self.storage._tindex)
             # Load saved ``Data.fs.index`` to see the persistent changes
             # created by the previous child.
             index, start, ltid =\
@@ -51,9 +54,9 @@ class FileStorageIndex(object):
             # Sanity check. Last transaction in restored index must match
             # the last transaction given by FileStorage transaction iterator.
             if ltid and ltid == tuple(self.storage.iterator())[-1].tid:
-                self.storage._initIndex(index, {})
+                self.storage._initIndex(index, tindex)
                 self.storage._pos, self.storage._oid, tid = read_index(
-                    self.storage._file, self.storage._file_name, index, {},
+                    self.storage._file, self.storage._file_name, index, tindex,
                     stop="\377" * 8, ltid=ltid, start=start, read_only=False)
                 self.storage._ltid = tid
                 self.storage._ts = TimeStamp(tid)
