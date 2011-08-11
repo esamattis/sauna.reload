@@ -168,7 +168,7 @@ class ForkLoop(object):
 
         self.forking = False
 
-        logger.info("Booted up new new child in %s seconds. PID %i" % (
+        logger.info("Booted up new child in %s seconds. PID %i" % (
             time.time() - self.child_started,  os.getpid()))
 
         notify(NewChildIsReady(self))
