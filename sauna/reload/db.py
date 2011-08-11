@@ -30,7 +30,9 @@ from ZODB.FileStorage.FileStorage import read_index
 class FileStorageIndex(object):
 
     def __init__(self, storage):
-        # Try to get the "real" FileStorage, which could be wrapped (in Plone 4.1)
+        # Try to get the *real* FileStorage, because `storage` may be just
+        # a BlobStorage-wrapper and it wraps FileStorage differently between
+        # ZODB3-3.9.5 and 3.10.x-series (eg. between Plone 4.0 and 4.1).
         self.storage = getattr(storage, "_BlobStorage__storage", storage)
 
     def save(self):
