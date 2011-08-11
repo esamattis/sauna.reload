@@ -4,6 +4,7 @@ Changelog
 0.2.1 - current
 ------------------
 
+- Support Plone 4.1
 - Heavily edited readme [miohtama]
 
 0.2.1 - 2011-08-03
