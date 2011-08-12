@@ -73,7 +73,7 @@ def get_deferred_deps_info():
                 dist = ws.find(req)  # find req from the current working set
                 if dist is None or dist.location in reload_paths:
                     continue
-                # Resolve ZCMLs to be loaded for the others requirements
+                # Resolve ZCMLs to be loaded for the other requirements
                 dist_manager = DistributionManager(get_provider(req))
                 for dotted_name in dist_manager.dottedNames():
                     module = resolve(dotted_name)
