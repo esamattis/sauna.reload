@@ -168,6 +168,8 @@ class ForkLoop(object):
 
         self.forking = False
 
+        logger.logDeferredErrors()
+
         logger.info("Booted up new child in %s seconds. PID %i" % (
             time.time() - self.child_started,  os.getpid()))
 
