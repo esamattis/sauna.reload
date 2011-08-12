@@ -122,7 +122,11 @@ def include_deferred_deps():
 
 def check_deferring():
     """Check if configuration files were deferred successfully"""
-    from Zope2.App.zcml import _context as configuration_context
+    try:
+        from Zope2.App.zcml import _context as configuration_context
+        configuration_context  # pyflakes
+    except ImportError:
+        from Products.Five.zcml import _context as configuration_context
 
     from sauna.reload import reload_paths
     from sauna.reload.utils import logger
