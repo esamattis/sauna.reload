@@ -120,6 +120,20 @@ def include_deferred_deps():
     load_string(config)
 
 
+def check_deferring():
+    """Check if configuration files were deferred successfully"""
+    from Zope2.App.zcml import _context as configuration_context
+
+    from sauna.reload import reload_paths
+    from sauna.reload.utils import logger
+
+    cwd = os.getcwd() + os.path.sep
+    for zcml in getattr(configuration_context, "_seen_files", ()):
+        if zcml in reload_paths:
+            logger.error("Failed to defer %s. IT WILL NOT BE RELOADABLE."
+                         % zcml.replace(cwd, ""))
+
+
 def include_deferred():
     """Autoinclude deferred packages"""
     import sauna.reload
