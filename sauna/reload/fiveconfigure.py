@@ -57,18 +57,29 @@ def findDeferredProducts():
 
 def defer_install():
     # Patch fiveconfigure with findProducts unable to see reloaded paths
-    import Products.Five.fiveconfigure
-    setattr(Products.Five.fiveconfigure, "findProducts", findProducts)
+    try:
+        import OFS.metaconfigure
+        setattr(OFS.metaconfigure, "findProducts", findProducts)
+    except ImportError:
+        import Products.Five.fiveconfigure
+        setattr(Products.Five.fiveconfigure, "findProducts", findProducts)
 
 
 def install_deferred():
     # Temporarily patch fiveconfigure with findProducts able to see only
     # products under reload paths and execute Five configuration directives
     import sauna.reload
-    import Products.Five.fiveconfigure
-    setattr(Products.Five.fiveconfigure, "findProducts", findDeferredProducts)
-    load_config("fiveconfigure.zcml", sauna.reload)
-    setattr(Products.Five.fiveconfigure, "findProducts", findProducts)
+    try:
+        import OFS.metaconfigure
+        setattr(OFS.metaconfigure, "findProducts", findDeferredProducts)
+        load_config("fiveconfigure.zcml", sauna.reload)
+        setattr(OFS.metaconfigure, "findProducts", findProducts)
+    except ImportError:
+        import Products.Five.fiveconfigure
+        setattr(Products.Five.fiveconfigure, "findProducts",
+                findDeferredProducts)
+        load_config("fiveconfigure.zcml", sauna.reload)
+        setattr(Products.Five.fiveconfigure, "findProducts", findProducts)
 
     # Five pushes old-style product initializations into
     # Products._packages_to_initialize-list. We must loop through that list
