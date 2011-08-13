@@ -2,8 +2,8 @@
 # Copyright (c) 2011 University of Jyväskylä
 #
 # Authors:
-#     Asko Soukka <asko.soukka@iki.fi>
 #     Esa-Matti Suuronen <esa-matti@suuronen.org>
+#     Asko Soukka <asko.soukka@iki.fi>
 #
 # This file is part of sauna.reload.
 #
@@ -29,6 +29,7 @@ from sauna.reload import forkloop, reload_paths
 from sauna.reload.forkloop import CannotSpawnNewChild
 from sauna.reload.utils import logger
 
+
 class SaunaReload(BrowserView):
 
     def __call__(self):
@@ -41,9 +42,7 @@ class SaunaReload(BrowserView):
             except CannotSpawnNewChild as e:
                 logger.error(str(e.args[0]))
 
-
         return self.index()
 
     def getChildPid(self):
         return os.getpid()
-

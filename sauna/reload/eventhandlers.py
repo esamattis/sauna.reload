@@ -25,7 +25,8 @@ import time
 from ZServer.HTTPServer import zhttp_server
 from App.config import getConfiguration
 
-from sauna.reload import autoinclude, forkloop, reload_paths, watcher, monkeypatcher
+from sauna.reload import\
+    autoinclude, forkloop, reload_paths, watcher, monkeypatcher
 from sauna.reload.utils import errline, logger
 
 
@@ -34,7 +35,8 @@ def startForkLoop(event):
     if not monkeypatcher.PATCHED:
         errline()
         errline("sauna.reload is not installed correctly!")
-        errline("Your are missing following line from instance part of your buildout:")
+        errline("Your are missing following line from instance part "
+                "of your buildout:")
         errline()
         errline("    zope-conf-additional = %import sauna.reload")
         errline()
@@ -65,11 +67,10 @@ def startForkLoop(event):
     zserver = [server for server in config.servers
         if isinstance(server, zhttp_server)][0]
 
-    logger.info( "We saved at least %s seconds from boot up time" %
+    logger.info("We saved at least %s seconds from boot up time" %
         (time.time() - forkloop.boot_started))
 
     logger.info("Packages marked for reload are listed in here: "
         "http://127.0.0.1:%i/@@saunareload" % (zserver.port))
 
     forkloop.start()
-

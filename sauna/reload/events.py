@@ -51,9 +51,9 @@ class NewChildForked(object):
     def __init__(self, forkloop):
         self.forkloop = forkloop
 
+
 class NewChildIsReady(object):
     implements(INewChildIsReady)
 
     def __init__(self, forkloop):
         self.forkloop = forkloop
-

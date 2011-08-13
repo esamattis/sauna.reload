@@ -24,11 +24,10 @@ import sys
 import logging
 
 
-
 class LoggerWrapper(object):
 
     def __init__(self, name):
-        self.name  = name
+        self.name = name
         self._deferredErrors = []
         self.setParentLogger()
 
@@ -56,7 +55,5 @@ logger = LoggerWrapper("sauna.reload")
 
 
 def errline(msg="", *rest):
-    rest =  " ".join(map(str, rest))
+    rest = " ".join(map(str, rest))
     sys.stderr.write(str(msg) + " " + rest + "\n")
-
-

@@ -37,13 +37,16 @@ from sauna.reload.db import FileStorageIndex
 from sauna.reload.events import NewChildForked, NewChildIsReady
 from sauna.reload.utils import errline, logger
 
-class CannotSpawnNewChild(Exception): pass
+
+class CannotSpawnNewChild(Exception):
+    pass
+
 
 class ForkLoop(object):
 
     def __init__(self):
 
-        self.fork = True # Create child on start
+        self.fork = True  # Create child on start
         self.active = False
         self.pause = False
         self.killed_child = True
@@ -97,7 +100,6 @@ class ForkLoop(object):
         # TODO: Fetch adapter with interface
         self.storage_index = FileStorageIndex(DB.storage)
 
-
         # SIGCHLD tells us that child process has really died and we can spawn
         # new child
         registerHandler(signal.SIGCHLD, self._waitChildToDieAndScheduleNew)
@@ -107,9 +109,6 @@ class ForkLoop(object):
         registerHandler(signal.SIGUSR1, self._childIsGoingToDie)
 
         self.loop()
-
-
-
 
     def loop(self):
         """
@@ -137,8 +136,10 @@ class ForkLoop(object):
 
                 if not self.killed_child:
                     errline()
-                    errline("Child died on bootup. Pausing fork loop for now. ")
-                    errline("Fix possible errors and save edits and we'll try booting again.")
+                    errline("Child died on bootup. "
+                            "Pausing fork loop for now.")
+                    errline("Fix possible errors and save edits "
+                            "and we'll try booting again.")
                     errline("Waiting...")
 
                     # Child died because of unknown reason. Mark it as killed
@@ -197,35 +198,34 @@ class ForkLoop(object):
         autoinclude.include_deferred()
         fiveconfigure.install_deferred()
 
-
     def spawnNewChild(self):
         """
         STEP 1 (parent): New child spawning starts by killing the current
         child.
         """
 
-
         if not self.active:
             raise CannotSpawnNewChild("Loop not started yet")
 
         if self.forking:
-            raise CannotSpawnNewChild("Serious forking action is already going on. Cannot fork now.")
+            raise CannotSpawnNewChild("Serious forking action is already "
+                                      "going on. Cannot fork now.")
 
         if self.child_pid is None:
             raise CannotSpawnNewChild("No killing yet. Not started child yet")
-
 
         self.pause = False
 
         if not self.killed_child or self.isChild():
             self._killChild()
         else:
-            # Ok, we already have sent the SIGINT the child, but asking for new child
-            logger.info("Not sending SIGINT because we already killed the child. Just scheduling new fork.")
+            # Ok, we already have sent the SIGINT the child, but asking for new
+            # child
+            logger.info("Not sending SIGINT because we already killed "
+                        "the child. Just scheduling new fork.")
             self._scheduleFork()
 
         self.killed_child = True
-
 
     def _killChild(self):
         if self.isChild():
@@ -253,7 +253,6 @@ class ForkLoop(object):
 
         self.storage_index.save()
 
-
     def _waitChildToDieAndScheduleNew(self, signal=None, frame=None):
         """
         STEP 3 (parent): Child told us via SIGCHLD that we can spawn new child
@@ -264,7 +263,6 @@ class ForkLoop(object):
 
         # Schedule new
         self._scheduleFork()
-
 
     # Modified from Zope2/Startup/__init__.py
     def makePidFile(self):
@@ -280,7 +278,6 @@ class ForkLoop(object):
             except IOError:
                 pass
 
-
     # Modified from Zope2/Startup/__init__.py
     def makeLockFile(self):
         if not self.cfg.zserver_read_only_mode:
@@ -295,4 +292,3 @@ class ForkLoop(object):
                 lockfile.flush()
             except IOError:
                 pass
-

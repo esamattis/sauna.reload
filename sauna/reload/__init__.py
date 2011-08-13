@@ -46,4 +46,3 @@ forkloop.startBootTimer()
 # Hook into PEP 302 laoder
 from sauna.reload.monkeypatcher import MonkeyPatchingLoader
 __loader__ = MonkeyPatchingLoader(sys.modules[__name__])
-

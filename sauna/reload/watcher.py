@@ -31,6 +31,7 @@ registerHandler = SignalHandler.registerHandler
 from sauna.reload.forkloop import CannotSpawnNewChild
 from sauna.reload.utils import logger
 
+
 class Watcher(FileSystemEventHandler):
 
     allowed_extensions = set(("py", "zcml", "po"))
@@ -48,7 +49,7 @@ class Watcher(FileSystemEventHandler):
         registerHandler(signal.SIGTERM, self._exitHandler)
 
         for path in self.paths:
-            logger.info("Starting file monitor on %s" %  path)
+            logger.info("Starting file monitor on %s" % path)
             observer = Observer()
             self.observers.append(observer)
             observer.schedule(self, path=path, recursive=True)
@@ -63,10 +64,8 @@ class Watcher(FileSystemEventHandler):
         if ext not in self.allowed_extensions:
             return
 
-
         logger.info("Got '%s' event on %s" %
             (event.event_type, event.src_path))
-
 
         try:
             self.forkloop.spawnNewChild()

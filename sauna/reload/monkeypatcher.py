@@ -30,13 +30,13 @@ from sauna.reload import autoinclude, fiveconfigure
 
 PATCHED = False
 
+
 class MonkeyPatchingLoader(ImpLoader):
     """Lucky for us ZConfig will use PEP 302 module hooks to load this file,
     and this class implements a get_data hook to intercept the component.xml
     loading and give us a point to generate it.
 
     Thanks to Martijn Pieters for teaching us this trick."""
-
 
     def __init__(self, module):
         name = module.__name__
