@@ -6,7 +6,8 @@ Changelog
 
 - Support Plone 4.1
 - Heavily edited readme [miohtama]
-- Show nice error log message if product installation failed to defer ie. is not reloadable.
+- Show nice error log message if product installation failed to defer ie. is
+  not reloadable.
 
 0.2.1 - 2011-08-03
 ------------------
