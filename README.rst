@@ -101,7 +101,7 @@ OSX special notes
                
 For OSX you need to install trunk version of WatchDog
 providing `FSEvents <http://en.wikipedia.org/wiki/FSEvents>`_ based file-system monitoring support.
-                                
+
 **Do this before running buildout. Otherwise delete existing downloaded
 WatchDog eggs**.                                
                                 
@@ -120,7 +120,14 @@ It will complain::
         error: yaml.h: No such file or directory
         
 ... but just ignore it.                
-        
+
+If you are using vim (or macvim) on OSX, you must disable vim's writebackups to allow WatchDog to see your modifications (otherwise vim will technically create a new file on each save and WatchDog doesn't really understand what happened). Add the following to the end of your ``.vimrc``::
+
+  set noswapfile
+  set nobackup
+  set nowritebackup
+
+
 Updating the existing buildout.cfg
 -------------------------------------
 
@@ -304,23 +311,26 @@ Currently only FileStorage (ZODB) is supported.
 Please report any other issues at:
 https://github.com/epeli/sauna.reload/issues.
 
+
 Troubleshooting
 ==================
 
 Report all issues on `GitHub <https://github.com/epeli/sauna.reload>`_.
+
 
 My code does not reload properly
 -----------------------------------
 
 You'll see reload process going on in the terminal, but your code is still not loaded.
 
-Make sure your code is hooked into Plone
-through `z3c.autoinclude <http://plone.org/products/plone/roadmap/247>`_.
+You should see following warnings with zcml-paths from your developed code::
 
-.. warning::
+  2011-08-13 09:38:12 ERROR sauna.reload.child Failed to defer
+  src/sauna.reload/sauna/reload/configure.zcml. IT WILL NOT BE RELOADABLE.
 
-        If your code egg is referred using zcml = directive in buildout.cfg
-        sauna.reload cannot load it.
+Make sure your code is hooked into Plone through
+`z3c.autoinclude <http://plone.org/products/plone/roadmap/247>`_ and NOT
+using explicit ``zcml = directive``in buildout.cfg.
 
 * Retrofit your eggs with autoinclude support if needed
         
@@ -328,23 +338,8 @@ through `z3c.autoinclude <http://plone.org/products/plone/roadmap/247>`_.
 
 * Rerun buildout (remember bin/buildout -c development.cfg)
 
-* Restart Plone with sauna.reload enabled        
+* Restart Plone with sauna.reload enabled
 
-Too many files open on OSX
------------------------------
-
-This happens when starting Plone in relaod mode.
-
-Probably FSEvents support is not active in Watchdog. Follow
-the instructions above.
-
-OSX has limitation of 256 file handles. If not using 
-FSEvents (using kqueue) each monitored file needs an open handle.
-Raising the ulimit of open file handles is not exactly trivial on OSX.
-
-More info
-
-* https://github.com/epeli/sauna.reload/issues/4
 
 sauna.reload is not active - nothing printed on console
 ----------------------------------------------------------
@@ -356,10 +351,12 @@ If using separate ``development.cfg`` make sure you run your buildout using it::
 
         bin/buildout -c development.cfg
 
+
 Source
 =======
 
 On `GitHub <https://github.com/epeli/sauna.reload>`_.
+
 
 Credits
 =======
