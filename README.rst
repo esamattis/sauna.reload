@@ -63,7 +63,7 @@ Use git to fetch  ``sauna.reload`` source code to your buildout environment::
   git clone git://github.com/epeli/sauna.reload.git
 
 Create a new buildout file ``development.cfg`` which extends your existing
-``buildout.cfg`` -- this way you can easily keep development stuff separate
+``buildout.cfg`` – this way you can easily keep development stuff separate
 from your main buildout.cfg which you can also use on the production server.
 
 ``development.cfg``::

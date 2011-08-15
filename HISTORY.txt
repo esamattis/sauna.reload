@@ -1,7 +1,12 @@
 Changelog
 =========
 
-0.3.0 - 2011-08-12
+0.3.1 – unreleased
+------------------
+
+- Licensed under ZPL.
+
+0.3.0 – 2011-08-12
 ------------------
 
 - Support Plone 4.1
@@ -9,14 +14,15 @@ Changelog
 - Show nice error log message if product installation failed to defer ie. is
   not reloadable.
 
-0.2.1 - 2011-08-03
+0.2.1 – 2011-08-03
 ------------------
+
 - Add INewChildIsReady event and move INewChildForked event
 - Remove overly used prints and use logging
 - Can now reload __init__.py from package root
 
 
-0.2.0 - 2011-08-04
+0.2.0 – 2011-08-04
 ------------------
 
 - Support for Five-initialized products (e.g. Archetypes).
@@ -24,14 +30,14 @@ Changelog
 - Emit INewChildForked events
 - Many bug fixes
 
-0.1.1 - 2011-08-03
+0.1.1 – 2011-08-03
 ------------------
 
 - Added missing egg description.
 - Added forgotten reload for localizations.
 - Prefixed commands in README with $.
 
-0.1.0 - 2011-08-03
+0.1.0 – 2011-08-03
 ------------------
 
 - First experimental release.
