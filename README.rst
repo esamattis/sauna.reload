@@ -107,7 +107,7 @@ Use git to fetch  ``sauna.reload`` source code to your buildout environment::
   cd src
   git clone git://github.com/gorakhargosh/watchdog.git
 
-Add ``watchdog`` as a developed egg onto your buildout configuration just next
+Add ``watchdog`` as a developed egg into your buildout configuration just next
 to ``sauna.reload``.
 
 ``development.cfg``::
