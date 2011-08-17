@@ -106,10 +106,7 @@ Use git to fetch  ``sauna.reload`` source code to your buildout environment::
 
   cd src
   git clone git://github.com/gorakhargosh/watchdog.git
-  cd watchdog
-  # Activate virtualenv in this point if needed
-  python setup.py install
-
+ 
 Add ``watchdog`` as a developed egg into your buildout configuration just next
 to ``sauna.reload``.
 
