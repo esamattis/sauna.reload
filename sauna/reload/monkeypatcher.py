@@ -1,24 +1,18 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011 University of Jyväskylä
+# Copyright (c) 2011 University of Jyväskylä and Contributors.
+#
+# All Rights Reserved.
 #
 # Authors:
-#     Asko Soukka <asko.soukka@iki.fi>
 #     Esa-Matti Suuronen <esa-matti@suuronen.org>
+#     Asko Soukka <asko.soukka@iki.fi>
 #
-# This file is part of sauna.reload.
-#
-# sauna.reload is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# sauna.reload is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
 
 """Module implementation loader with Zope monkey patching abilities"""
 
@@ -30,13 +24,13 @@ from sauna.reload import autoinclude, fiveconfigure
 
 PATCHED = False
 
+
 class MonkeyPatchingLoader(ImpLoader):
     """Lucky for us ZConfig will use PEP 302 module hooks to load this file,
     and this class implements a get_data hook to intercept the component.xml
     loading and give us a point to generate it.
 
     Thanks to Martijn Pieters for teaching us this trick."""
-
 
     def __init__(self, module):
         name = module.__name__

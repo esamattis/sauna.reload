@@ -1,24 +1,18 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011 University of Jyväskylä
+# Copyright (c) 2011 University of Jyväskylä and Contributors.
+#
+# All Rights Reserved.
 #
 # Authors:
 #     Esa-Matti Suuronen <esa-matti@suuronen.org>
 #     Asko Soukka <asko.soukka@iki.fi>
 #
-# This file is part of sauna.reload.
-#
-# sauna.reload is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# sauna.reload is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
 
 import signal
 
@@ -30,6 +24,7 @@ registerHandler = SignalHandler.registerHandler
 
 from sauna.reload.forkloop import CannotSpawnNewChild
 from sauna.reload.utils import logger
+
 
 class Watcher(FileSystemEventHandler):
 
@@ -48,7 +43,7 @@ class Watcher(FileSystemEventHandler):
         registerHandler(signal.SIGTERM, self._exitHandler)
 
         for path in self.paths:
-            logger.info("Starting file monitor on %s" %  path)
+            logger.info("Starting file monitor on %s" % path)
             observer = Observer()
             self.observers.append(observer)
             observer.schedule(self, path=path, recursive=True)
@@ -63,10 +58,8 @@ class Watcher(FileSystemEventHandler):
         if ext not in self.allowed_extensions:
             return
 
-
         logger.info("Got '%s' event on %s" %
             (event.event_type, event.src_path))
-
 
         try:
             self.forkloop.spawnNewChild()

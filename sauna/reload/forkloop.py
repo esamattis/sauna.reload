@@ -1,25 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011 University of Jyväskylä
+# Copyright (c) 2011 University of Jyväskylä and Contributors.
+#
+# All Rights Reserved.
 #
 # Authors:
 #     Esa-Matti Suuronen <esa-matti@suuronen.org>
 #     Asko Soukka <asko.soukka@iki.fi>
 #
-# This file is part of sauna.reload.
-#
-# sauna.reload is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# sauna.reload is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with sauna.reload.  If not, see <http://www.gnu.org/licenses/>.
-
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 
 import time
 import os
@@ -37,13 +29,16 @@ from sauna.reload.db import FileStorageIndex
 from sauna.reload.events import NewChildForked, NewChildIsReady
 from sauna.reload.utils import errline, logger
 
-class CannotSpawnNewChild(Exception): pass
+
+class CannotSpawnNewChild(Exception):
+    pass
+
 
 class ForkLoop(object):
 
     def __init__(self):
 
-        self.fork = True # Create child on start
+        self.fork = True  # Create child on start
         self.active = False
         self.pause = False
         self.killed_child = True
@@ -97,7 +92,6 @@ class ForkLoop(object):
         # TODO: Fetch adapter with interface
         self.storage_index = FileStorageIndex(DB.storage)
 
-
         # SIGCHLD tells us that child process has really died and we can spawn
         # new child
         registerHandler(signal.SIGCHLD, self._waitChildToDieAndScheduleNew)
@@ -107,9 +101,6 @@ class ForkLoop(object):
         registerHandler(signal.SIGUSR1, self._childIsGoingToDie)
 
         self.loop()
-
-
-
 
     def loop(self):
         """
@@ -137,8 +128,10 @@ class ForkLoop(object):
 
                 if not self.killed_child:
                     errline()
-                    errline("Child died on bootup. Pausing fork loop for now. ")
-                    errline("Fix possible errors and save edits and we'll try booting again.")
+                    errline("Child died on bootup. "
+                            "Pausing fork loop for now.")
+                    errline("Fix possible errors and save edits "
+                            "and we'll try booting again.")
                     errline("Waiting...")
 
                     # Child died because of unknown reason. Mark it as killed
@@ -168,6 +161,8 @@ class ForkLoop(object):
 
         self.forking = False
 
+        logger.logDeferredErrors()
+
         logger.info("Booted up new child in %s seconds. PID %i" % (
             time.time() - self.child_started,  os.getpid()))
 
@@ -195,35 +190,34 @@ class ForkLoop(object):
         autoinclude.include_deferred()
         fiveconfigure.install_deferred()
 
-
     def spawnNewChild(self):
         """
         STEP 1 (parent): New child spawning starts by killing the current
         child.
         """
 
-
         if not self.active:
             raise CannotSpawnNewChild("Loop not started yet")
 
         if self.forking:
-            raise CannotSpawnNewChild("Serious forking action is already going on. Cannot fork now.")
+            raise CannotSpawnNewChild("Serious forking action is already "
+                                      "going on. Cannot fork now.")
 
         if self.child_pid is None:
             raise CannotSpawnNewChild("No killing yet. Not started child yet")
-
 
         self.pause = False
 
         if not self.killed_child or self.isChild():
             self._killChild()
         else:
-            # Ok, we already have sent the SIGINT the child, but asking for new child
-            logger.info("Not sending SIGINT because we already killed the child. Just scheduling new fork.")
+            # Ok, we already have sent the SIGINT the child, but asking for new
+            # child
+            logger.info("Not sending SIGINT because we already killed "
+                        "the child. Just scheduling new fork.")
             self._scheduleFork()
 
         self.killed_child = True
-
 
     def _killChild(self):
         if self.isChild():
@@ -251,7 +245,6 @@ class ForkLoop(object):
 
         self.storage_index.save()
 
-
     def _waitChildToDieAndScheduleNew(self, signal=None, frame=None):
         """
         STEP 3 (parent): Child told us via SIGCHLD that we can spawn new child
@@ -262,7 +255,6 @@ class ForkLoop(object):
 
         # Schedule new
         self._scheduleFork()
-
 
     # Modified from Zope2/Startup/__init__.py
     def makePidFile(self):
@@ -278,7 +270,6 @@ class ForkLoop(object):
             except IOError:
                 pass
 
-
     # Modified from Zope2/Startup/__init__.py
     def makeLockFile(self):
         if not self.cfg.zserver_read_only_mode:
@@ -293,4 +284,3 @@ class ForkLoop(object):
                 lockfile.flush()
             except IOError:
                 pass
-
