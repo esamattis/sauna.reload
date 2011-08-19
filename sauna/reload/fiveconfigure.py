@@ -63,13 +63,13 @@ def install_deferred():
     # products under reload paths and execute Five configuration directives
     import sauna.reload
     try:
-        # Zope 2.12
+        # Zope 2.13
         import OFS.metaconfigure
         setattr(OFS.metaconfigure, "findProducts", findDeferredProducts)
         load_config("fiveconfigure.zcml", sauna.reload)
         setattr(OFS.metaconfigure, "findProducts", findProducts)
     except ImportError:
-        # Zope 2.13
+        # Zope 2.12
         import Products.Five.fiveconfigure
         setattr(Products.Five.fiveconfigure, "findProducts",
                 findDeferredProducts)
