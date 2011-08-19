@@ -4,6 +4,7 @@ Changelog
 0.3.1 – unreleased
 ------------------
 
+- Archetypes support with Plone 4.1.
 - Licensed under ZPL.
 
 0.3.0 – 2011-08-12

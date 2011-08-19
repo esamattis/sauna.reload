@@ -87,14 +87,14 @@ def install_deferred():
     debug_mode = getConfiguration().debug_mode
     from sauna.reload import reload_paths
     try:
-        # Zope 2.12
+        # Zope 2.13
         import OFS.metaconfigure
         for module, init_func in getattr(
                 OFS.metaconfigure, "_packages_to_initialize", []):
             if getattr(module, "__file__") in reload_paths:
                 install_package(app, module, init_func, raise_exc=debug_mode)
     except ImportError:
-        # Zope 2.13
+        # Zope 2.12
         import Products
         for module, init_func in getattr(
                 Products, "_packages_to_initialize", []):
