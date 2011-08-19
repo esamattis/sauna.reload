@@ -70,11 +70,13 @@ def install_deferred():
     # products under reload paths and execute Five configuration directives
     import sauna.reload
     try:
+        # Zope 2.12
         import OFS.metaconfigure
         setattr(OFS.metaconfigure, "findProducts", findDeferredProducts)
         load_config("fiveconfigure.zcml", sauna.reload)
         setattr(OFS.metaconfigure, "findProducts", findProducts)
     except ImportError:
+        # Zope 2.13
         import Products.Five.fiveconfigure
         setattr(Products.Five.fiveconfigure, "findProducts",
                 findDeferredProducts)
@@ -84,7 +86,6 @@ def install_deferred():
     # Five pushes old-style product initializations into
     # Products._packages_to_initialize-list. We must loop through that list
     # for our reloaded packages and try to install them.
-    import Products
     from App.config import getConfiguration
     from OFS.Application import install_package
     from Zope2.App.startup import app
@@ -92,8 +93,19 @@ def install_deferred():
     app = app()  # XXX: Help! Should we use use app._p_jar-stuff around here?
     debug_mode = getConfiguration().debug_mode
     from sauna.reload import reload_paths
-    for module, init_func in getattr(Products, "_packages_to_initialize", []):
-        if getattr(module, "__file__") in reload_paths:
-            install_package(app, module, init_func, raise_exc=debug_mode)
-    if hasattr(Products, "_packages_to_initialize"):
-        del Products._packages_to_initialize
+    try:
+        # Zope 2.12
+        import OFS.metaconfigure
+        for module, init_func in getattr(
+                OFS.metaconfigure, "_packages_to_initialize", []):
+            if getattr(module, "__file__") in reload_paths:
+                install_package(app, module, init_func, raise_exc=debug_mode)
+    except ImportError:
+        # Zope 2.13
+        import Products
+        for module, init_func in getattr(
+                Products, "_packages_to_initialize", []):
+            if getattr(module, "__file__") in reload_paths:
+                install_package(app, module, init_func, raise_exc=debug_mode)
+        if hasattr(Products, "_packages_to_initialize"):
+            del Products._packages_to_initialize
