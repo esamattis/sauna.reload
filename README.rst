@@ -102,7 +102,7 @@ OSX special notes
 For OSX you need to install trunk version of WatchDog providing `FSEvents
 <http://en.wikipedia.org/wiki/FSEvents>`_ based file-system monitoring support.
 
-Use git to fetch  ``sauna.reload`` source code to your buildout environment::
+Use git to fetch  ``watchdog`` source code to your buildout environment::
 
   cd src
   git clone git://github.com/gorakhargosh/watchdog.git
