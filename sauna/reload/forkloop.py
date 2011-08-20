@@ -249,12 +249,15 @@ class ForkLoop(object):
         """
         STEP 3 (parent): Child told us via SIGCHLD that we can spawn new child
         """
+        try:
+            # Acknowledge dead child
+            os.wait()
 
-        # Acknowledge dead child
-        os.wait()
-
-        # Schedule new
-        self._scheduleFork()
+            # Schedule new
+            self._scheduleFork()
+        except OSError:
+            # OSError: [Errno 10] No child processes (= false alarm)
+            pass
 
     # Modified from Zope2/Startup/__init__.py
     def makePidFile(self):
