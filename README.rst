@@ -265,6 +265,7 @@ Internally ``sauna.reload`` uses
 `WatchDog <http://pypi.python.org/pypi/watchdog>`_
 Python component for monitoring file-system change events.
 
+See also `Ruby guys on fork trick <http://www.youtube.com/watch?feature=player_detailpage&v=ghLCtCwAKqQ#t=286s>`_.
 
 Events
 ======
