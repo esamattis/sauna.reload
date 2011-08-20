@@ -214,9 +214,9 @@ killing your pdb, you may add the following to your ``~/.pdbrc``::
   term_result = termios.tcsetattr(term_fd, termios.TCSADRAIN, term_echo)
 
 ``sauna.reload`` also should work nicely with `PdbTextMateSupport
-http://pypi.python.org/pypi/PdbTextMateSupport`_ and `PdbSublimeTextSupport
-http://pypi.python.org/pypi/PdbSublimeTextSupport`_. Unfortunately, we haven't
-seen it working with ``vimpdb`` yet.
+<http://pypi.python.org/pypi/PdbTextMateSupport>`_ and `PdbSublimeTextSupport
+<http://pypi.python.org/pypi/PdbSublimeTextSupport>`_. Unfortunately, we
+haven't seen it working with ``vimpdb`` yet.
 
 
 Background
