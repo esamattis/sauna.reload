@@ -78,8 +78,7 @@ from your main buildout.cfg which you can also use on the production server.
   [instance]
 
   # XXX: May conflict with existing zope-conf-additional directives
-  zope-conf-additional =
-      %import sauna.reload
+  zope-conf-additional = %import sauna.reload
 
   eggs +=
       sauna.reload
@@ -227,23 +226,15 @@ it has. Like being unable to reload new grokked views or portlet code. This
 project was started on Plone Sauna Sprint 2011. There for the name,
 ``sauna.reload``.
 
-It can reload:
-
-* Portlets
-* Schema Interface changes
-* Adapters
-* Meta programming magic (e.g. Grok)
-* ZCML
-* Translations (changes in PO files)
-* etc.
-
 ``sauna.reload`` does reloading by using a fork loop. So actually it does not
-reload the code, but restarts small part of Zope2.
+reload the code, but restarts small part of Zope2. That's why it can it reload
+stuff ``plone.reload`` cannot.
 
 It does following on Zope2 startup:
 
 1. Defers loading of your development packages by hooking into PEP 302 loader
-   and changing their ``z3c.autoinclude`` target module
+   and changing their ``z3c.autoinclude`` target module (and monkeypatching
+   fiveconfigure/metaconfigure for legacy packages).
 
 2. Starts a watcher thread which monitors changes in your development py-files
 
@@ -254,8 +245,8 @@ It does following on Zope2 startup:
 
 4. It forks a new child and lets it pass the loop
 
-5. Loads all your development packages invoking ``z3c.autoinclude``. This is
-   fast!
+5. Loads all your development packages invoking ``z3c.autoinclude`` (and
+   fiveconfigure/metaconfigure for legacy packages). This is fast!
 
 6. And now every time when the watcher thread detects a change in development
    files it will signal the child to shutdown and the child will signal
@@ -271,6 +262,7 @@ Internally ``sauna.reload`` uses
 Python component for monitoring file-system change events.
 
 See also `Ruby guys on fork trick <http://www.youtube.com/watch?feature=player_detailpage&v=ghLCtCwAKqQ#t=286s>`_.
+
 
 Events
 ======
@@ -294,16 +286,24 @@ Events
 Limitations
 ===========
 
-Deferring installation of development packages to the end of Plone boot up
-process means that reloading of Core Plone packages is tricky (or impossible?).
-For example plone.app.form is depended by CMFPlone and CMFPlone really must be
-installed before the fork loop or there would be no speed difference between
-``sauna.reload`` and normal Plone restart. So we cannot defer the installation
-of plone.app.form to the end of boot up process. You would have to remove the
-dependency from CMFPlone for development to make it work...
+``sauna.reload`` has a major pitfall. Because it depends on deferring loading
+of packages to be watched and reloaded, also every package depending on those
+packages should be defined to be reloaded (in ``RELOAD_PATH``). And
+``sauna.reload`` doesn't resolve those dependencies automatically!
 
-Also because the product installation order is altered you may find some issues
-if your product does something funky on installation or at import time.
+An another potential troublemaker is that ``sauna.reload`` performs implicit
+``<includeDependencies package="." />`` for every package in ``RELOAD_PATH``
+(to preload dependencies for those packages to speed up the reload).
+
+We are sorry that ``sauna.reload`` may not work for everyone. For example,
+reloading of core Plone packages could be tricky, if not impossible, because
+many of them are explicitly included by ``configure.zcml`` of CMFPlone and are
+not using ``z3c.autoincude`` at all. You would have to remove the dependency
+from CMFPlone for development to make it work...
+
+Also because the product installation order is altered (by all the above) you
+may find some issue if your product does something funky on installation or at
+import time.
 
 Currently only FileStorage (ZODB) is supported.
 
@@ -336,6 +336,35 @@ using explicit ``zcml = directive`` in buildout.cfg.
 * Remove zcml = lines for your eggs in buildout.cfg
 * Rerun buildout (remember bin/buildout -c development.cfg)
 * Restart Plone with sauna.reload enabled
+
+
+I want to exclude my ``meta.zcml`` from reload
+----------------------------------------------
+
+It's possible to manually exclude configuration files from reloading by
+forcing them to be loaded by a custom ``site.zcml``. Be aware, that
+when ``site-zcml`` option is used, ``zope2instance`` ignores ``zcml`` and
+``zcml-additional`` options.
+
+Define a custom ``site.zcml`` in your buildout with::
+
+ [instance]
+ recipe = plone.recipe.zope2instance
+ ...
+ site-zcml =
+   <configure
+       xmlns="http://namespaces.zope.org/zope"
+       xmlns:meta="http://namespaces.zope.org/meta"
+       xmlns:five="http://namespaces.zope.org/five">
+     <include package="Products.Five" />
+     <meta:redefinePermission from="zope2.Public" to="zope.Public" />
+     <five:loadProducts file="meta.zcml"/>
+     <!-- Add your meta.zcml after five:loadProducts for meta.zcml -->
+     <!-- <include package="my.product" file="meta.zcml" /> -->
+     <five:loadProducts />
+     <five:loadProductsOverrides />
+     <securityPolicy component="Products.Five.security.FiveSecurityPolicy" />
+   </configure>
 
 
 sauna.reload is not active - nothing printed on console
