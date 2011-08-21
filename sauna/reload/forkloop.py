@@ -252,12 +252,11 @@ class ForkLoop(object):
         try:
             # Acknowledge dead child
             os.wait()
-
-            # Schedule new
-            self._scheduleFork()
         except OSError:
-            # OSError: [Errno 10] No child processes (= false alarm)
+            # OSError: [Errno 10] No child processes
             pass
+        # Schedule new
+        self._scheduleFork()
 
     # Modified from Zope2/Startup/__init__.py
     def makePidFile(self):
