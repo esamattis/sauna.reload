@@ -346,21 +346,43 @@ forcing them to be loaded by a custom ``site.zcml``. Be aware, that
 when ``site-zcml`` option is used, ``zope2instance`` ignores ``zcml`` and
 ``zcml-additional`` options.
 
-Define a custom ``site.zcml`` in your buildout with::
+Define a custom ``site.zcml`` in your ``buildout.cfg`` with::
 
  [instance]
  recipe = plone.recipe.zope2instance
  ...
  site-zcml =
-   <configure
-       xmlns="http://namespaces.zope.org/zope"
-       xmlns:meta="http://namespaces.zope.org/meta"
-       xmlns:five="http://namespaces.zope.org/five">
+   <configure xmlns="http://namespaces.zope.org/zope"
+              xmlns:meta="http://namespaces.zope.org/meta"
+              xmlns:five="http://namespaces.zope.org/five">
      <include package="Products.Five" />
      <meta:redefinePermission from="zope2.Public" to="zope.Public" />
      <five:loadProducts file="meta.zcml"/>
-     <!-- Add your meta.zcml after five:loadProducts for meta.zcml -->
-     <!-- <include package="my.product" file="meta.zcml" /> -->
+     <!-- Add include for your package's meta.zcml here: -->
+     <include package="my.product" file="meta.zcml" />
+     <five:loadProducts />
+     <five:loadProductsOverrides />
+     <securityPolicy component="Products.Five.security.FiveSecurityPolicy" />
+   </configure>
+
+
+I want to exclude ALL ``meta.zcml`` from reload
+-----------------------------------------------
+
+Sure. See the tip above and use the snippet below instead::
+
+ [instance]
+ recipe = plone.recipe.zope2instance
+ ...
+ site-zcml =
+   <configure xmlns="http://namespaces.zope.org/zope"
+              xmlns:meta="http://namespaces.zope.org/meta"
+              xmlns:five="http://namespaces.zope.org/five">
+     <include package="Products.Five" />
+     <meta:redefinePermission from="zope2.Public" to="zope.Public" />
+     <five:loadProducts file="meta.zcml"/>
+     <!-- Add autoinclude-directive for deferred meta.zcml here: -->
+     <includePlugins package="sauna.reload" file="meta.zcml" />
      <five:loadProducts />
      <five:loadProductsOverrides />
      <securityPolicy component="Products.Five.security.FiveSecurityPolicy" />
