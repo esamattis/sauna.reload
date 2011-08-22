@@ -9,7 +9,7 @@
 
   <subscriber
       for=".events.INewChildIsReady"
-      handler=".genericsetup.importGSProfiles"
+      handler=".genericsetup.autoImportProfiles"
       />
 
   <browser:page

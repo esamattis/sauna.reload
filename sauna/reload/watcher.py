@@ -23,12 +23,13 @@ from Signals.SignalHandler import SignalHandler
 registerHandler = SignalHandler.registerHandler
 
 from sauna.reload.forkloop import CannotSpawnNewChild
+from sauna.reload.genericsetup import autoImportProfiles
 from sauna.reload.utils import logger
 
 
 class Watcher(FileSystemEventHandler):
 
-    allowed_extensions = set(("py", "zcml", "po", "xml"))
+    allowed_extensions = set(("py", "zcml", "po"))
 
     def __init__(self, paths, forkloop):
         self.forkloop = forkloop
@@ -56,7 +57,14 @@ class Watcher(FileSystemEventHandler):
     def on_any_event(self, event):
         ext = event.src_path.split(".")[-1].lower()
         if ext not in self.allowed_extensions:
-            return
+            # if ext in ("xml", "csv"):
+            #     autoImportProfiles()
+            # TODO: autoImportProfiles() here causes
+            # ERROR GenericSetup Unknown step in dependency chain:
+            # u'profile-my.product:default'
+            # return
+            if ext not in ("xml", "csv"):
+                return
 
         logger.info("Got '%s' event on %s" %
             (event.event_type, event.src_path))
