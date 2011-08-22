@@ -19,6 +19,7 @@ from zope.publisher.browser import BrowserView
 
 from sauna.reload import forkloop, reload_paths
 from sauna.reload.forkloop import CannotSpawnNewChild
+from sauna.reload.genericsetup import autoImportProfiles
 from sauna.reload.utils import logger
 
 
@@ -38,3 +39,10 @@ class SaunaReload(BrowserView):
 
     def getChildPid(self):
         return os.getpid()
+
+
+class SaunaReloadProfiles(BrowserView):
+
+    def __call__(self):
+        autoImportProfiles()
+        return u""

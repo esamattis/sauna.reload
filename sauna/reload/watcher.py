@@ -15,6 +15,7 @@
 # FOR A PARTICULAR PURPOSE.
 
 import signal
+from urllib2 import urlopen, HTTPError
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -23,7 +24,6 @@ from Signals.SignalHandler import SignalHandler
 registerHandler = SignalHandler.registerHandler
 
 from sauna.reload.forkloop import CannotSpawnNewChild
-from sauna.reload.genericsetup import autoImportProfiles
 from sauna.reload.utils import logger
 
 
@@ -57,14 +57,14 @@ class Watcher(FileSystemEventHandler):
     def on_any_event(self, event):
         ext = event.src_path.split(".")[-1].lower()
         if ext not in self.allowed_extensions:
-            # if ext in ("xml", "csv"):
-            #     autoImportProfiles()
-            # TODO: autoImportProfiles() here causes
-            # ERROR GenericSetup Unknown step in dependency chain:
-            # u'profile-my.product:default'
-            # return
-            if ext not in ("xml", "csv"):
-                return
+            if ext in ("xml", "csv"):
+                server = self.forkloop.cfg.servers[0]
+                try:
+                    urlopen("http://%s:%s/@@saunareloadprofiles" %\
+                        (server.server_name, server.port)).read()
+                except HTTPError:
+                    pass
+            return
 
         logger.info("Got '%s' event on %s" %
             (event.event_type, event.src_path))

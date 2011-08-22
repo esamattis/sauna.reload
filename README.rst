@@ -341,29 +341,31 @@ using explicit ``zcml = directive`` in buildout.cfg.
 I want to exclude my ``meta.zcml`` from reload
 ----------------------------------------------
 
-It's possible to manually exclude configuration files from reloading by
-forcing them to be loaded by a custom ``site.zcml``. Be aware, that
+It's possible to manually exclude configuration files from reloading by forcing
+them to be loaded before forkloop in a custom ``site.zcml``. Be aware, that
 when ``site-zcml`` option is used, ``zope2instance`` ignores ``zcml`` and
 ``zcml-additional`` options.
 
 Define a custom ``site.zcml`` in your ``buildout.cfg`` with::
 
- [instance]
- recipe = plone.recipe.zope2instance
- ...
- site-zcml =
-   <configure xmlns="http://namespaces.zope.org/zope"
-              xmlns:meta="http://namespaces.zope.org/meta"
-              xmlns:five="http://namespaces.zope.org/five">
-     <include package="Products.Five" />
-     <meta:redefinePermission from="zope2.Public" to="zope.Public" />
-     <five:loadProducts file="meta.zcml"/>
-     <!-- Add include for your package's meta.zcml here: -->
-     <include package="my.product" file="meta.zcml" />
-     <five:loadProducts />
-     <five:loadProductsOverrides />
-     <securityPolicy component="Products.Five.security.FiveSecurityPolicy" />
-   </configure>
+  [instance]
+  recipe = plone.recipe.zope2instance
+  ...
+  site-zcml =
+    <configure xmlns="http://namespaces.zope.org/zope"
+               xmlns:meta="http://namespaces.zope.org/meta"
+               xmlns:five="http://namespaces.zope.org/five">
+      <include package="Products.Five" />
+      <meta:redefinePermission from="zope2.Public" to="zope.Public" />
+      <five:loadProducts file="meta.zcml"/>
+
+      <!-- Add include for your package's meta.zcml here: -->
+      <include package="my.product" file="meta.zcml" />
+
+      <five:loadProducts />
+      <five:loadProductsOverrides />
+      <securityPolicy component="Products.Five.security.FiveSecurityPolicy" />
+    </configure>
 
 
 I want to exclude ALL ``meta.zcml`` from reload
@@ -371,37 +373,51 @@ I want to exclude ALL ``meta.zcml`` from reload
 
 Sure. See the tip above and use the snippet below instead::
 
- [instance]
- recipe = plone.recipe.zope2instance
- ...
- site-zcml =
-   <configure xmlns="http://namespaces.zope.org/zope"
-              xmlns:meta="http://namespaces.zope.org/meta"
-              xmlns:five="http://namespaces.zope.org/five">
-     <include package="Products.Five" />
-     <meta:redefinePermission from="zope2.Public" to="zope.Public" />
-     <five:loadProducts file="meta.zcml"/>
-     <!-- Add autoinclude-directive for deferred meta.zcml here: -->
-     <includePlugins package="sauna.reload" file="meta.zcml" />
-     <five:loadProducts />
-     <five:loadProductsOverrides />
-     <securityPolicy component="Products.Five.security.FiveSecurityPolicy" />
-   </configure>
+  [instance]
+  recipe = plone.recipe.zope2instance
+  ...
+  site-zcml =
+    <configure xmlns="http://namespaces.zope.org/zope"
+               xmlns:meta="http://namespaces.zope.org/meta"
+               xmlns:five="http://namespaces.zope.org/five">
+      <include package="Products.Five" />
+      <meta:redefinePermission from="zope2.Public" to="zope.Public" />
+      <five:loadProducts file="meta.zcml"/>
+
+      <!-- Add autoinclude-directive for deferred meta.zcml here: -->
+      <includePlugins package="sauna.reload" file="meta.zcml" />
+
+      <five:loadProducts />
+      <five:loadProductsOverrides />
+      <securityPolicy component="Products.Five.security.FiveSecurityPolicy" />
+    </configure>
 
 
-I wanto autoimport a GenricSetup profile after reload
------------------------------------------------------
+I want to autoimport a GenericSetup profile after each reload
+-------------------------------------------------------------
 
-::
+``sauna.reload`` comes with an opt-in support for autoimporting selected
+GenericSetup profiles after every reload or when a change in an ``xml`` or
+``csv`` file is detected. This may be beneficial, for example, when developing
+the first GenericSetup profile for a new product. Still, be careful. Profiles
+will not be *uninstalled*, only re-imported over and over again.
 
- [instance]
- recipe = plone.recipe.zope2instance
- ...
- zcml-additional =
-   <configure xmlns="http://namespaces.zope.org/zope">
-     <utility name="myploneid;profile-my.product:default"
-              factory="sauna.reload.genericsetup.ProfileAutoImport" />
-   </configure>
+Enable autoimport for your profile by registering a utility in
+``zcml-additional`` of your ``buildout.cfg``::
+
+  [instance]
+  recipe = plone.recipe.zope2instance
+  ...
+  zcml-additional =
+    <configure xmlns="http://namespaces.zope.org/zope">
+      <utility name="profile-my.product:default"
+               factory="sauna.reload.genericsetup.ProfileAutoImport" />
+    </configure>
+
+Be aware, that when ``site-zcml`` option is used, ``zope2instance`` ignores
+``zcml`` and ``zcml-additional`` options, and you must include the previous
+utility registration into your ``site-zcml``.
+
 
 sauna.reload is not active - nothing printed on console
 -------------------------------------------------------

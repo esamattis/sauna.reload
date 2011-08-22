@@ -3,14 +3,14 @@
     xmlns:browser="http://namespaces.zope.org/browser">
 
   <subscriber
-      for="zope.processlifetime.IProcessStarting"
-      handler=".eventhandlers.startForkLoop"
-      />
+    for="zope.processlifetime.IProcessStarting"
+    handler=".eventhandlers.startForkLoop"
+    />
 
   <subscriber
-      for=".events.INewChildIsReady"
-      handler=".genericsetup.autoImportProfiles"
-      />
+    for=".events.INewChildIsReady"
+    handler=".genericsetup.autoImportProfiles"
+    />
 
   <browser:page
     name="saunareload"
@@ -18,6 +18,13 @@
     permission="zope2.ViewManagementScreens"
     class=".browser.SaunaReload"
     template="saunareload.pt"
+    />
+
+  <browser:page
+    name="saunareloadprofiles"
+    for="OFS.interfaces.IApplication"
+    permission="zope.Public"
+    class=".browser.SaunaReloadProfiles"
     />
 
 </configure>
