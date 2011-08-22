@@ -48,12 +48,12 @@ class ProfileAutoImport(object):
 
 def autoImportProfiles(event=None):
     registrations = getUtilitiesFor(IProfileAutoImport)
-    try:
-        for registration in registrations:
-            utility = registration[1]
-            profile = registration[0]
+    for registration in registrations:
+        utility = registration[1]
+        profile = registration[0]
+        try:
             utility.autoImport(profile)
-    except ConflictError:
-        raise
-    finally:
-        commit()
+        except ConflictError:
+            raise
+        finally:
+            commit()
