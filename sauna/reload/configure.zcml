@@ -7,6 +7,10 @@
       handler=".eventhandlers.startForkLoop"
       />
 
+  <subscriber
+      for=".events.INewChildIsReady"
+      handler=".genericsetup.importGSProfiles"
+      />
 
   <browser:page
     name="saunareload"
@@ -15,6 +19,5 @@
     class=".browser.SaunaReload"
     template="saunareload.pt"
     />
-
 
 </configure>

@@ -28,7 +28,7 @@ from sauna.reload.utils import logger
 
 class Watcher(FileSystemEventHandler):
 
-    allowed_extensions = set(("py", "zcml", "po"))
+    allowed_extensions = set(("py", "zcml", "po", "xml"))
 
     def __init__(self, paths, forkloop):
         self.forkloop = forkloop

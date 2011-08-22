@@ -389,6 +389,20 @@ Sure. See the tip above and use the snippet below instead::
    </configure>
 
 
+I wanto autoimport a GenricSetup profile after reload
+-----------------------------------------------------
+
+::
+
+ [instance]
+ recipe = plone.recipe.zope2instance
+ ...
+ zcml-additional =
+   <configure xmlns="http://namespaces.zope.org/zope">
+     <utility name="myploneid;profile-my.product:default"
+              factory="sauna.reload.genericsetup.ProfileAutoImport" />
+   </configure>
+
 sauna.reload is not active - nothing printed on console
 -------------------------------------------------------
 
