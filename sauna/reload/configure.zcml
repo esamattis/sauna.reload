@@ -7,10 +7,10 @@
     handler=".eventhandlers.startForkLoop"
     />
 
-  <subscriber
-    for=".events.INewChildIsReady"
-    handler=".genericsetup.autoImportProfiles"
-    />
+  <!-- <subscriber -->
+  <!--   for=".events.INewChildIsReady" -->
+  <!--   handler=".genericsetup.autoImportProfiles" -->
+  <!--   /> -->
 
   <browser:page
     name="saunareload"
