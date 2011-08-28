@@ -419,6 +419,7 @@ Credits
 * Mikko Ohtamaa (idea, doccing)
 * Vilmos Somogyi (logo). The logo was originally the logo of Sauna Sprint 2011
   and it was created by Vilmos Somogyi.
+* Martijn Pieters for teaching us PEP 302 -loader trick at Sauna Sprint 2011.
 * `Yesudeep Mangalapilly <https://github.com/gorakhargosh>`_ for creating
   ``WatchDog`` component and providing support for Sauna Sprint team using it
 
