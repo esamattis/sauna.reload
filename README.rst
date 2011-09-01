@@ -26,6 +26,10 @@ works on Windows, but no one has looked into that yet.
 
 .. |->| unicode:: U+02794 .. thick rightwards arrow
 
+User comments
+---------------
+
+"I don't want to use sauna.reload as I can knit a row while I restart ..."
 
 Installation
 ==============
