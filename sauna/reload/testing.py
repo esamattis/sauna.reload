@@ -41,3 +41,5 @@ class ForkLoopLayer(Layer):
         Watcher(reload_paths.getParentPaths(), self.forkloop).start()
 
         self.forkloop.start()
+
+FORKLOOP = ForkLoopLayer()
