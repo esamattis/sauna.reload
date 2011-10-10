@@ -52,6 +52,9 @@ class ForkLoop(object):
         self.boot_started = None
         self.child_started = None
 
+        self.cfg = None
+        self.storage_index = None
+
     def isChild(self):
         return self.child_pid == 0
 
@@ -63,7 +66,12 @@ class ForkLoop(object):
         self.child_started = time.time()
 
     def isChildAlive(self):
-        return self.isChild()
+
+        if self.isChild():
+            return True
+
+        return (self.child_pid is not None
+            and os.path.exists("/proc/%i" % self.child_pid))
 
     def _scheduleFork(self, signum=None, frame=None):
         self.fork = True
@@ -75,6 +83,14 @@ class ForkLoop(object):
         """
         Start fork loop.
         """
+
+        # Load configuration here to make sure that everything for it is loaded
+        self.cfg = getConfiguration()
+
+        # Must import here because we don't have DB on bootup yet
+        from Globals import DB
+        # TODO: Fetch adapter with interface
+        self.storage_index = FileStorageIndex(DB.storage)
 
         # SIGCHLD tells us that child process has really died and we can spawn
         # new child
@@ -150,6 +166,8 @@ class ForkLoop(object):
         logger.info("Booted up new child in %s seconds. PID %i" % (
             time.time() - self.child_started,  os.getpid()))
 
+        notify(NewChildIsReady(self))
+
     def _prepareNewChild(self):
         """
         Prepare newly forked child. Make sure that it can properly read DB
@@ -159,6 +177,18 @@ class ForkLoop(object):
         # Register exit listener. We cannot immediately spawn new child when we
         # get a modified event. Must wait that child has closed database etc.
         atexit.register(self._childExitHandler)
+
+        # Make sure that PID files and locks stay here, because dying child
+        # will clear them.
+        self.makeLockFile()
+        self.makePidFile()
+
+        self.storage_index.restore()
+
+        notify(NewChildForked(self))
+
+        autoinclude.include_deferred()
+        fiveconfigure.install_deferred()
 
     def spawnNewChild(self):
         """
@@ -209,7 +239,11 @@ class ForkLoop(object):
             self._killChild()
 
     def _childExitHandler(self):
-        pass
+        """
+        STEP 2 (child): Child is about to die. Fix DB.
+        """
+
+        self.storage_index.save()
 
     def _waitChildToDieAndScheduleNew(self, signal=None, frame=None):
         """
@@ -223,70 +257,6 @@ class ForkLoop(object):
             pass
         # Schedule new
         self._scheduleFork()
-
-
-class Zope2ForkLoop(ForkLoop):
-
-    def __init__(self):
-        super(Zope2ForkLoop, self).__init__()
-        self.cfg = None
-        self.storage_index = None
-
-    def isChildAlive(self):
-
-        if self.isChild():
-            return True
-
-        return (self.child_pid is not None
-            and os.path.exists("/proc/%i" % self.child_pid))
-
-    def start(self):
-        """
-        Start fork loop.
-        """
-
-        # Load configuration here to make sure that everything for it is loaded
-        self.cfg = getConfiguration()
-
-        # Must import here because we don't have DB on bootup yet
-        from Globals import DB
-        # TODO: Fetch adapter with interface
-        self.storage_index = FileStorageIndex(DB.storage)
-
-        super(Zope2ForkLoop, self).start()
-
-    def loop(self):
-        """
-        Magic happens here
-        """
-        super(Zope2ForkLoop, self).loop()
-        notify(NewChildIsReady(self))
-
-    def _prepareNewChild(self):
-        """
-        Prepare newly forked child. Make sure that it can properly read DB
-        and install deferred products.
-        """
-        super(Zope2ForkLoop, self)._prepareNewChild()
-
-        # Make sure that PID files and locks stay here, because dying child
-        # will clear them.
-        self.makeLockFile()
-        self.makePidFile()
-
-        self.storage_index.restore()
-
-        notify(NewChildForked(self))
-
-        autoinclude.include_deferred()
-        fiveconfigure.install_deferred()
-
-    def _childExitHandler(self):
-        """
-        STEP 2 (child): Child is about to die. Fix DB.
-        """
-        super(Zope2ForkLoop, self).loop()
-        self.storage_index.save()
 
     # Modified from Zope2/Startup/__init__.py
     def makePidFile(self):

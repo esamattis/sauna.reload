@@ -28,7 +28,7 @@ import sys
 import os
 
 
-from sauna.reload.forkloop import Zope2ForkLoop as ForkLoop
+from sauna.reload.forkloop import ForkLoop
 from sauna.reload.reloadpaths import ReloadPaths
 
 reload_paths = ReloadPaths([os.path.join(os.getcwd(), p)
@@ -37,6 +37,6 @@ reload_paths = ReloadPaths([os.path.join(os.getcwd(), p)
 forkloop = ForkLoop()
 forkloop.startBootTimer()
 
-# Hook into PEP 302 loader
+# Hook into PEP 302 laoder
 from sauna.reload.monkeypatcher import MonkeyPatchingLoader
 __loader__ = MonkeyPatchingLoader(sys.modules[__name__])
