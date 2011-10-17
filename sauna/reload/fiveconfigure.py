@@ -89,15 +89,21 @@ def install_deferred():
     try:
         # Zope 2.13
         import OFS.metaconfigure
-        for module, init_func in getattr(
-                OFS.metaconfigure, "_packages_to_initialize", []):
+        # We iterate a copy of packages_to_initialize, because
+        # install_package mutates the original.
+        packages_to_initialize = [info for info in getattr(
+            OFS.metaconfigure, "_packages_to_initialize", [])]
+        for module, init_func in packages_to_initialize:
             if getattr(module, "__file__") in reload_paths:
                 install_package(app, module, init_func, raise_exc=debug_mode)
     except ImportError:
         # Zope 2.12
         import Products
-        for module, init_func in getattr(
-                Products, "_packages_to_initialize", []):
+        # We iterate a copy of packages_to_initialize, because
+        # install_package mutates the original.
+        packages_to_initialize = [info for info in getattr(
+            Products, "_packages_to_initialize", [])]
+        for module, init_func in packages_to_initialize:
             if getattr(module, "__file__") in reload_paths:
                 install_package(app, module, init_func, raise_exc=debug_mode)
         if hasattr(Products, "_packages_to_initialize"):
