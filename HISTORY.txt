@@ -1,11 +1,15 @@
 Changelog
 =========
 
+0.3.3 - 2011-10-17
+------------------
+
+- Fixed an issue in initializing more than one reloaded Archetype products.
 
 0.3.2 – 2011-08-21
 ------------------
 
-- Fix to work better with PdbSublimeText/TextMateSupport.
+- Fixed to work better with PdbSublimeText/TextMateSupport.
 - README-updates (mainly for exluding zcmls from reload).
 
 
