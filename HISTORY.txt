@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3.3 - 2011-10-17
+0.3.3 – 2011-10-17
 ------------------
 
 - Fixed an issue in initializing more than one reloaded Archetype products.
