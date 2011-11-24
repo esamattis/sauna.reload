@@ -131,6 +131,17 @@ So, Add the following to the end of your ``.vimrc``::
   set nobackup
   set nowritebackup
 
+Ubuntu/Debian/Linux special notes
++++++++++++++++++++++++++++++++++++
+
+You might need to raise your open files *ulimit* if you are operating on the 
+large set of files, both hard and soft limit.
+
+* http://posidev.com/blog/2009/06/04/set-ulimit-parameters-on-ubuntu/
+
+104000 is a known good value.
+
+If your *ulimit* is too low you'll get very misleading *OSError: No space left on device*.
 
 Updating the existing buildout.cfg
 ----------------------------------
