@@ -31,6 +31,8 @@ User comments
 
 "I don't want to use sauna.reload as I can knit a row while I restart ..."
 
+"no more do I start a 5 minute cigarette every time Plone restarts for 30 seconds... ok wait, this kind of joy leads to poetry, I'm gonna stop here."
+
 Installation
 ==============
 
