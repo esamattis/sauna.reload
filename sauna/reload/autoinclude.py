@@ -44,7 +44,7 @@ def defer_paths():
 def get_deferred_deps_info():
     """Return dictionary with lists of configuration files for the dependencies
     of the deferred eggs"""
-    deferred = ["zc.table"]
+    deferred = ["zc.table", "hurry.workflow"]
     # FIXME: Assuming that all dependencies should be autoincluded will
     # probably get us into trouble, but let's see how big trouble. ``zc.table``
     # is an example of a dependency, whose ``configure.zcml`` will not run in
