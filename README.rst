@@ -219,15 +219,19 @@ Debugging with ``sauna.reload``
 ===============================
 
 Regular ``import pdb; pdb.set_trace()`` will work just fine with
-``sauna.reload``. When reload happens while in pdb, though, pdb will get
-killed. To avoid losing your terminal echo, because of reload unexpectedly
-killing your pdb, you may add the following to your ``~/.pdbrc``::
+``sauna.reload`` and using ``ipdb`` as a drop-in for ``pdb`` will work
+fine as well. When reloads happen while in either pdb or ipdb, the debugger 
+will get killed. To avoid losing your terminal echo, because of reload 
+unexpectedly killing your debugger, you may add the following to your ``~/.pdbrc``::
 
   import termios, sys
   term_fd = sys.stdin.fileno()
   term_echo = termios.tcgetattr(term_fd)
   term_echo[3] = term_echo[3] | termios.ECHO
   term_result = termios.tcsetattr(term_fd, termios.TCSADRAIN, term_echo)
+
+As ipdb extends pdb, this configuration file will also work to restore the
+terminal echo.
 
 ``sauna.reload`` also should work nicely with `PdbTextMateSupport
 <http://pypi.python.org/pypi/PdbTextMateSupport>`_ and `PdbSublimeTextSupport
