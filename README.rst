@@ -102,30 +102,10 @@ Then build it out with this special config file::
 OSX special notes
 +++++++++++++++++
 
-.. note:: The following applies to OSX only until Watchog 0.5.4+ is released.
-
-For OSX you need to install trunk version of WatchDog providing `FSEvents
-<http://en.wikipedia.org/wiki/FSEvents>`_ based file-system monitoring support.
-
-Use git to fetch  ``watchdog`` source code to your buildout environment::
-
-  cd src
-  git clone git://github.com/gorakhargosh/watchdog.git
- 
-Add ``watchdog`` as a developed egg into your buildout configuration just next
-to ``sauna.reload``.
-
-``development.cfg``::
-
-  [buildout]
-
-  develop +=
-      src/watchdog
-      src/sauna.reload
-
-If you are using vim (or macvim) on OSX, you must disable vim's writebackups to
-allow WatchDog to see your modifications (otherwise vim will technically create
-a new file on each save and WatchDog doesn't really understand what happened).
+If you are using vim (or macvim) on OSX, you must disable vim's writebackups
+to allow WatchDog to see your modifications
+(otherwise vim will technicallyj create a new file on each save and WatchDog
+doesn't report the modification back to ``sauna.reload``).
 
 So, Add the following to the end of your ``.vimrc``::
 

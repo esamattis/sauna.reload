@@ -26,7 +26,7 @@ setup(name="sauna.reload",
           "setuptools",
           "z3c.autoinclude",
           # -*- Extra requirements: -*-
-          "watchdog",
+          "watchdog>=0.6.0",
       ],
       entry_points="""
       # -*- Entry points: -*-
