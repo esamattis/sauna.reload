@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Default Event Implementations"""
 # Copyright (c) 2011 University of Jyväskylä and Contributors.
 #
 # All Rights Reserved.
@@ -13,28 +14,9 @@
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 
-from zope.interface import Interface, implements
+from zope.interface import implements
 
-
-class INewChildForked(Interface):
-    """
-    Emited immediately after new process is forked. No development packages
-    have been yet installed.
-
-    Useful if you want to do something before your code gets loaded.
-
-    Note that you cannot listen this event on a package that is marked for
-    reloading as it is not yet installed when this is fired.
-    """
-
-
-class INewChildIsReady(Interface):
-    """
-    Emitted when all the development packages has been installed to the new
-    forked child.
-
-    Useful for notifications etc.
-    """
+from sauna.reload.interfaces import INewChildForked, INewChildIsReady
 
 
 class NewChildForked(object):
