@@ -1,0 +1,11 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+    <subscriber
+        for="sauna.reload.events.INewChildIsReady"
+        handler=".theming.onStartup"
+        zcml:condition="installed plone.app.theming"
+        />
+
+</configure>

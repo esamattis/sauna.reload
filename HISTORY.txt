@@ -1,17 +1,23 @@
 Changelog
 =========
 
+
 0.4.0 – unreleased
 ------------------
 
+- Added support to p.a.theming's plugins when p.a.theming is installed.
+  [datakurre]
+
 - Fixed an issue of 'zope2.Public' not mapped to 'zope.Public' when confiuring
   products during reload.
+  [datakurre]
 
 
 0.3.3 – 2011-10-17
 ------------------
 
 - Fixed an issue in initializing more than one reloaded Archetype products.
+
 
 0.3.2 – 2011-08-21
 ------------------
@@ -26,6 +32,7 @@ Changelog
 - Support for Five-initialized products (e.g. Archetypes) on Plone 4.1.
 - Licensed under ZPL.
 
+
 0.3.0 – 2011-08-12
 ------------------
 
@@ -33,6 +40,7 @@ Changelog
 - Heavily edited readme [miohtama]
 - Show nice error log message if product installation failed to defer ie. is
   not reloadable.
+
 
 0.2.1 – 2011-08-03
 ------------------
@@ -50,12 +58,14 @@ Changelog
 - Emit INewChildForked events
 - Many bug fixes
 
+
 0.1.1 – 2011-08-03
 ------------------
 
 - Added missing egg description.
 - Added forgotten reload for localizations.
 - Prefixed commands in README with $.
+
 
 0.1.0 – 2011-08-03
 ------------------
