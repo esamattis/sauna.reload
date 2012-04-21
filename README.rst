@@ -1,4 +1,4 @@
-.. figure:: https://github.com/epeli/sauna.reload/raw/gh-pages/saunasprint_logo.jpg
+.. figure:: https://github.com/collective/sauna.reload/raw/gh-pages/saunasprint_logo.jpg
 
 *sauna.reload: so that you can finish your Plone development today and relax in
 sauna after calling it a day*
@@ -7,7 +7,7 @@ sauna after calling it a day*
 
 
 Introduction
-=============
+============
 
 ``sauna.reload`` partially restarts Plone and reloads your changed source
 code every time you save a file.
@@ -26,15 +26,18 @@ works on Windows, but no one has looked into that yet.
 
 .. |->| unicode:: U+02794 .. thick rightwards arrow
 
+
 User comments
----------------
+-------------
 
 "I don't want to use sauna.reload as I can knit a row while I restart ..."
 
-"no more do I start a 5 minute cigarette every time Plone restarts for 30 seconds... ok wait, this kind of joy leads to poetry, I'm gonna stop here."
+"no more do I start a 5 minute cigarette every time Plone restarts for 30
+seconds... ok wait, this kind of joy leads to poetry, I'm gonna stop here."
+
 
 Installation
-==============
+============
 
 Here are brief installation instructions.
 
@@ -53,9 +56,6 @@ In order to take the advantage of ``sauna.reload``
 
 No knowledge for warming up sauna is needed in order to use this product.
 
-.. note:: Currently it is recommended to install sauna.reload directly from
-   GitHub as it is under heavy development.
-
 
 Using new buildout file for the development
 -------------------------------------------
@@ -66,7 +66,7 @@ development environment.
 Use git to fetch  ``sauna.reload`` source code to your buildout environment::
 
   cd src
-  git clone git://github.com/epeli/sauna.reload.git
+  git clone git://github.com/collective/sauna.reload.git
 
 Create a new buildout file ``development.cfg`` which extends your existing
 ``buildout.cfg`` – this way you can easily keep development stuff separate
@@ -113,17 +113,23 @@ So, Add the following to the end of your ``.vimrc``::
   set nobackup
   set nowritebackup
 
+Similar issues have been reported with some other OSX-editors.
+Tips and fixes for these are welcome.
+
+
 Ubuntu/Debian/Linux special notes
 +++++++++++++++++++++++++++++++++++
 
-You might need to raise your open files *ulimit* if you are operating on the 
+You might need to raise your open files *ulimit* if you are operating on the
 large set of files, both hard and soft limit.
 
 * http://posidev.com/blog/2009/06/04/set-ulimit-parameters-on-ubuntu/
 
 104000 is a known good value.
 
-If your *ulimit* is too low you'll get very misleading *OSError: No space left on device*.
+If your *ulimit* is too low you'll get very misleading *OSError: No space left
+on device*.
+
 
 Updating the existing buildout.cfg
 ----------------------------------
@@ -181,8 +187,8 @@ messages with shutdown.
    mechanism.
 
 Only eggs loaded through `z3c.autoinclude
-<http://plone.org/products/plone/roadmap/247>`_.  can be reloaded. Make sure
-you don't use buildout.cfg ``zcml =`` directive for your eggs or
+<http://plone.org/products/plone/roadmap/247>`_ can be reloaded.
+Make sure you don't use buildout.cfg ``zcml =`` directive for your eggs or
 ``sauna.reload`` silently ignores changes.
 
 
@@ -199,10 +205,12 @@ Debugging with ``sauna.reload``
 ===============================
 
 Regular ``import pdb; pdb.set_trace()`` will work just fine with
-``sauna.reload`` and using ``ipdb`` as a drop-in for ``pdb`` will work
-fine as well. When reloads happen while in either pdb or ipdb, the debugger 
-will get killed. To avoid losing your terminal echo, because of reload 
-unexpectedly killing your debugger, you may add the following to your ``~/.pdbrc``::
+``sauna.reload``
+and using ``ipdb`` as a drop-in for ``pdb`` will work fine as well.
+When reloads happen while in either pdb or ipdb, the debugger will get
+killed.
+To avoid losing your terminal echo, because of reload unexpectedly
+killing your debugger, you may add the following to your ``~/.pdbrc``::
 
   import termios, sys
   term_fd = sys.stdin.fileno()
@@ -299,7 +307,7 @@ An another potential troublemaker is that ``sauna.reload`` performs implicit
 We are sorry that ``sauna.reload`` may not work for everyone. For example,
 reloading of core Plone packages could be tricky, if not impossible, because
 many of them are explicitly included by ``configure.zcml`` of CMFPlone and are
-not using ``z3c.autoincude`` at all. You would have to remove the dependency
+not using ``z3c.autoinclude`` at all. You would have to remove the dependency
 from CMFPlone for development to make it work...
 
 Also because the product installation order is altered (by all the above) you
@@ -309,13 +317,13 @@ import time.
 Currently only FileStorage (ZODB) is supported.
 
 Please report any other issues at:
-https://github.com/epeli/sauna.reload/issues.
+https://github.com/collective/sauna.reload/issues.
 
 
 Troubleshooting
 ===============
 
-Report all issues on `GitHub <https://github.com/epeli/sauna.reload>`_.
+Report all issues on `GitHub <https://github.com/collective/sauna.reload>`_.
 
 
 My code does not reload properly
@@ -409,7 +417,7 @@ it::
 Source
 ======
 
-On `GitHub <https://github.com/epeli/sauna.reload>`_.
+On `GitHub <https://github.com/collective/sauna.reload>`_.
 
 
 Credits

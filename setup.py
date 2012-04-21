@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
-version = "0.3.3"
+version = "0.4.0"
 
 setup(name="sauna.reload",
       version=version,
-      description="Instant code reloading for Plone using a fork loop.",
+      description="Instant code reloading for Plone using a fork loop",
       long_description=open("README.rst").read() + "\n" +
                        open("HISTORY.txt").read(),
       # Get more strings from
@@ -16,7 +16,7 @@ setup(name="sauna.reload",
       keywords="plone reload zope2 restart developer",
       author="Esa-Matti Suuronen",
       author_email="esa-matti@suuronen.org",
-      url="http://github.com/epeli/sauna.reload",
+      url="http://github.com/collective/sauna.reload",
       license="ZPL",
       packages=find_packages(exclude=["ez_setup"]),
       namespace_packages=["sauna"],
