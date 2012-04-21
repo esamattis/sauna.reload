@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.4.0 – unreleased
+------------------
+
+- Fixed an issue of 'zope2.Public' not mapped to 'zope.Public' when confiuring
+  products during reload.
+
+
 0.3.3 – 2011-10-17
 ------------------
 

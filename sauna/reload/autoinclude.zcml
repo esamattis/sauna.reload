@@ -1,6 +1,11 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
     xmlns:zcml="http://namespaces.zope.org/zcml">
+
+    <!-- Map legacy 'zope2.Public'-permission to 'zope.Public'
+         for the configuration context of our 'reload' -->
+    <meta:redefinePermission from="zope2.Public" to="zope.Public" />
 
     <!-- Invoke z3c.autoinclude for deferred packages -->
 
