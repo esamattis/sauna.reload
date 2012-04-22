@@ -14,6 +14,8 @@
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
 
+"""ReloadPaths-utility to ease reload path related operations"""
+
 import os
 
 
@@ -42,11 +44,11 @@ class ReloadPaths(object):
         egg_paths = []
 
         for path in self.paths:
-            if os.path.exists(os.path.join(path, "setup.py")):
+            if os.path.exists(os.path.join(path, 'setup.py')):
                 egg_paths.append(path)
             else:
                 for dirpath, dirnames, filenames in os.walk(path):
-                    if "setup.py" in filenames:
+                    if 'setup.py' in filenames:
                         egg_paths.append(dirpath)
 
         return sorted(egg_paths)
@@ -76,11 +78,11 @@ class ReloadPaths(object):
 
 if __name__ == '__main__':
     paths = [
-        "/foo/bar",
-        "/newparent",
-        "/foo",
-        "/foo/child",
-        "/another/one",
+        '/foo/bar',
+        '/newparent',
+        '/foo',
+        '/foo/child',
+        '/another/one',
     ]
     rp = ReloadPaths(paths)
     print list(rp.getParentPaths())

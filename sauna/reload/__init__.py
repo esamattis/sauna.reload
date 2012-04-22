@@ -14,22 +14,25 @@
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
 
-"""sauna.reload"""
+"""
+sauna.reload
+============
 
-# Enable sauna.reload's Zope patches and deferrend z3c.autoinclude includes by
-# adding ``zope-conf-additional = %import sauna.reload`` into your buildout's
-# *plone.recipe.zope2instance*-part.
-#
-# [instance]
-# recipe = plone.recipe.zope2instance
-# zope-conf-additional = %import sauna.reload
+Enable sauna.reload's Zope patches and deferrend z3c.autoinclude includes
+by adding ``zope-conf-additional = %import sauna.reload``
+into your buildout's part with *plone.recipe.zope2instance*-recipe::
+
+  [instance]
+  recipe = plone.recipe.zope2instance
+  zope-conf-additional = %import sauna.reload
+"""
 
 import sys
 import os
 
-
 from sauna.reload.forkloop import ForkLoop
 from sauna.reload.reloadpaths import ReloadPaths
+
 
 reload_paths = ReloadPaths([os.path.join(os.getcwd(), p)
     for p in os.environ.get("RELOAD_PATH", "").split(":") if p])

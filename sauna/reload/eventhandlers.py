@@ -53,8 +53,8 @@ def startForkLoop(event):
 
     # Build and execute a configuration file to include meta, configuration and
     # overrides for dependencies of the deferred development packages.
-    autoinclude.include_deferred_deps()
-    autoinclude.check_deferring()
+    autoinclude.includeDependenciesForDeferred()
+    autoinclude.checkDeferringErrors()
 
     config = getConfiguration()
     zserver = [server for server in config.servers

@@ -12,7 +12,9 @@ from sauna.reload import reload_paths
 
 
 def onStartup(event):
-    """Call onDiscovery() on each plugin for each theme on startup"""
+    """
+    Call onDiscovery() on each plugin for each theme on startup
+    """
 
     plugins = getPlugins()
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Database Adapters"""
 # Copyright (c) 2011 University of Jyväskylä and Contributors.
 #
 # All Rights Reserved.
@@ -14,6 +13,8 @@
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 
+"""Database Adapters"""
+
 from persistent.TimeStamp import TimeStamp
 
 from zope.interface import implements
@@ -27,7 +28,9 @@ from sauna.reload.interfaces import IDatabaseHooks
 
 
 class ZODBDatabaseHooksAdapter(object):
-    """Selective ZODB-adapter (e.g. supporting both FileStorage and ZEO)"""
+    """
+    Selective ZODB-adapter (e.g. supporting both FileStorage and ZEO)
+    """
     implements(IDatabaseHooks)
     adapts(IDatabase)
 
@@ -43,7 +46,9 @@ class ZODBDatabaseHooksAdapter(object):
 
 
 class ZODBFileStorageDatabaseHooksAdapter(object):
-    """FileStorage-adapter"""
+    """
+    FileStorage-adapter
+    """
     implements(IDatabaseHooks)
     adapts(FileStorage)
 
@@ -52,7 +57,7 @@ class ZODBFileStorageDatabaseHooksAdapter(object):
         # because `context` may be just a BlobStorage-wrapper
         # and it wraps FileStorage differently between
         # ZODB3-3.9.5 and 3.10.x-series (eg. between Plone 4.0 and 4.1).
-        self.context = getattr(context, "_BlobStorage__storage", context)
+        self.context = getattr(context, '_BlobStorage__storage', context)
 
     def prepareForReload(self):
         # Save ``Data.fs.index`` before dying
@@ -82,7 +87,7 @@ class ZODBFileStorageDatabaseHooksAdapter(object):
                 self.context._initIndex(index, tindex)
                 self.context._pos, self.context._oid, tid = read_index(
                     self.context._file, self.context._file_name, index, tindex,
-                    stop="\377" * 8, ltid=ltid, start=start, read_only=False)
+                    stop='\377' * 8, ltid=ltid, start=start, read_only=False)
                 self.context._ltid = tid
                 self.context._ts = TimeStamp(tid)
         finally:
@@ -90,7 +95,9 @@ class ZODBFileStorageDatabaseHooksAdapter(object):
 
 
 class ZEOClientStorageDatabaseHooksAdapter(object):
-    """ZEO-client adapter"""
+    """
+    ZEO-client adapter
+    """
     implements(IDatabaseHooks)
     adapts(ClientStorage)
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""ZCA Interface Definitions"""
 # Copyright (c) 2011 University of Jyväskylä and Contributors.
 #
 # All Rights Reserved.
@@ -13,6 +12,8 @@
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+
+"""ZCA Interface Definitions"""
 
 from zope.interface import Interface, Attribute
 
@@ -46,7 +47,7 @@ class INewChildForked(Interface):
     reloading as it is not yet installed when this is fired.
     """
 
-    forkloop = Attribute("ForkLoop instance")
+    forkloop = Attribute('ForkLoop instance')
 
 
 class INewChildIsReady(Interface):
@@ -57,4 +58,4 @@ class INewChildIsReady(Interface):
     Useful for notifications etc.
     """
 
-    forkloop = Attribute("ForkLoop instance")
+    forkloop = Attribute('ForkLoop instance')

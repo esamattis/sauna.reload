@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Overview"""
 # Copyright (c) 2011 University of Jyväskylä and Contributors.
 #
 # All Rights Reserved.
@@ -13,6 +12,8 @@
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+
+"""Overview"""
 
 import os
 

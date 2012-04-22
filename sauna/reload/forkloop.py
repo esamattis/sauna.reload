@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""The Fork Loop (tm)"""
 # Copyright (c) 2011 University of Jyväskylä and Contributors.
 #
 # All Rights Reserved.
@@ -13,6 +12,8 @@
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+
+"""The Fork Loop (tm)"""
 
 import time
 import os
@@ -161,8 +162,8 @@ class ForkLoop(object):
 
         self.forking = False
 
-        logger.logDeferred()
         logger.logDeferredErrors()
+        logger.logDeferred()
 
         logger.info("Booted up new child in %s seconds. PID %i" % (
             time.time() - self.child_started,  os.getpid()))
@@ -188,8 +189,8 @@ class ForkLoop(object):
 
         notify(NewChildForked(self))
 
-        autoinclude.include_deferred()
-        fiveconfigure.install_deferred()
+        autoinclude.includeDeferred()
+        fiveconfigure.installDeferred()
 
     def spawnNewChild(self):
         """

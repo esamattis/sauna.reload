@@ -14,6 +14,8 @@
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
 
+"""Watchdog-plugin to trigger reload when the developed files are modified"""
+
 import signal
 
 from watchdog.observers import Observer
@@ -37,7 +39,9 @@ class Watcher(FileSystemEventHandler):
         self.observers = []
 
     def start(self):
-        """Start file monitoring thread"""
+        """
+        Start file monitoring thread
+        """
 
         registerHandler(signal.SIGINT, self._exitHandler)
         registerHandler(signal.SIGTERM, self._exitHandler)

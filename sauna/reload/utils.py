@@ -14,6 +14,8 @@
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
 
+"""Logging utilities"""
+
 import sys
 import logging
 
@@ -43,20 +45,20 @@ class LoggerWrapper(object):
         self._deferredErrors = []
 
     def setParentLogger(self):
-        suffix = ".parent"
+        suffix = '.parent'
         self.logger = logging.getLogger(self.name + suffix)
 
     def setChildLogger(self):
-        suffix = ".child"
+        suffix = '.child'
         self.logger = logging.getLogger(self.name + suffix)
 
     def __getattr__(self, name):
         return getattr(self.logger, name)
 
 
-logger = LoggerWrapper("sauna.reload")
+logger = LoggerWrapper('sauna.reload')
 
 
 def errline(msg="", *rest):
-    rest = " ".join(map(str, rest))
-    sys.stderr.write(str(msg) + " " + rest + "\n")
+    rest = ' '.join(map(str, rest))
+    sys.stderr.write(str(msg) + ' ' + rest + '\n')

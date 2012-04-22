@@ -26,11 +26,13 @@ PATCHED = False
 
 
 class MonkeyPatchingLoader(ImpLoader):
-    """Lucky for us ZConfig will use PEP 302 module hooks to load this file,
+    """
+    Lucky for us ZConfig will use PEP 302 module hooks to load this file,
     and this class implements a get_data hook to intercept the component.xml
     loading and give us a point to generate it.
 
-    Thanks to Martijn Pieters for teaching us this trick."""
+    Thanks to Martijn Pieters for teaching us this trick.
+    """
 
     def __init__(self, module):
         name = module.__name__
@@ -41,13 +43,13 @@ class MonkeyPatchingLoader(ImpLoader):
     def get_data(self, pathname):
         global PATCHED
         PATCHED = True
-        if os.path.split(pathname) == (self.filename, "component.xml"):
+        if os.path.split(pathname) == (self.filename, 'component.xml'):
             from sauna.reload import reload_paths
             if reload_paths:
                 # 1) Defer autoinclude of packages found under reload paths.
-                autoinclude.defer_paths()
+                autoinclude.deferConfigurations()
                 # 2) Prevent Five from finding packages under reload paths.
-                fiveconfigure.defer_install()
+                fiveconfigure.deferInstalls()
             # 3) Return dummy config to keep Zope happy.
-            return "<component></component>"
+            return '<component></component>'
         return super(MonkeyPatchingLoader, self).get_data(self, pathname)
