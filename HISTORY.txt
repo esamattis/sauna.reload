@@ -2,20 +2,27 @@ Changelog
 =========
 
 
-0.4.0 – unreleased
+0.4.0 – 2012-04-22
 ------------------
 
-- Added logging for successfully reloaded configuration files.
+- Added log-messages about successfully reloaded configuration files.
+  Closes https://github.com/epeli/sauna.reload/issues/11
   [datakurre]
 
 - Added support for reloading a ZEO-client.
+  Fixes https://github.com/collective/sauna.reload/issues/1
   [datakurre]
 
-- Added support to p.a.theming's plugins when p.a.theming is installed.
+- Added support to *p.a.themingplugins* when *p.a.theming* is installed.
+  Fixes https://github.com/epeli/sauna.reload/issues/15
   [datakurre]
 
-- Fixed an issue of 'zope2.Public' not mapped to 'zope.Public' when confiuring
+- Fixed an issue of *zope2.Public* not mapped to *zope.Public* when confiuring
   products during reload.
+  Fixes https://github.com/collective/sauna.reload/issues/2
+  [datakurre]
+
+- Fixed to depend on *watchdog* >= 0.6.0 to support OSX *out-of-the-box*.
   [datakurre]
 
 
