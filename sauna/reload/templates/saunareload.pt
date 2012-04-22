@@ -10,12 +10,11 @@
 <p>Child PID: <span tal:content="view/getChildPid"></span></p>
 
 
-
-<h2>Packages marked for reload</h2>
+<h2>Reloadable configuration files</h2>
 
 <ul>
-  <li tal:repeat="path view/reload_paths/findEggPaths"
-      tal:content="path"></li>
+  <li tal:repeat="zcml view/getDeferredZCMLs"
+      tal:content="zcml"></li>
 </ul>
 
 

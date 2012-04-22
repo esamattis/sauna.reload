@@ -14,9 +14,9 @@
     <browser:page
         name="saunareload"
         for="OFS.interfaces.IApplication"
-        permission="zope2.ViewManagementScreens"
         class=".browser.SaunaReload"
-        template="saunareload.pt"
+        template="templates/saunareload.pt"
+        permission="zope2.ViewManagementScreens"
         />
 
     <include package=".plugins" />

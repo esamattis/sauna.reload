@@ -169,7 +169,7 @@ when Zope starts up::
 
   2011-08-10 13:28:59 INFO sauna.reload Starting file monitor on /Users/moo/code/x/plone4/src
   2011-08-10 13:29:02 INFO sauna.reload We saved at least 29.8229699135 seconds from boot up time
-  2011-08-10 13:29:02 INFO sauna.reload Packages marked for reload are listed in here: http://127.0.0.1:8080/@@saunareload
+  2011-08-10 13:29:02 INFO sauna.reload Overview available at: http://127.0.0.1:8080/@@saunareload
   2011-08-10 13:29:02 INFO sauna.reload Fork loop starting on process 14607
   2011-08-10 13:29:02 INFO sauna.reload Booted up new new child in 0.104816913605 seconds. Pid 14608
 
@@ -332,8 +332,8 @@ loaded.
 
 You should see following warnings with zcml-paths from your products::
 
-  2011-08-13 09:38:12 ERROR sauna.reload.child Failed to defer
-  src/sauna.reload/sauna/reload/configure.zcml. IT WILL NOT BE RELOADABLE.
+  2011-08-13 09:38:12 ERROR sauna.reload.child Cannot reload
+  src/sauna.reload/sauna/reload/configure.zcml.
 
 Make sure your code is hooked into Plone through
 `z3c.autoinclude <http://plone.org/products/plone/roadmap/247>`_ and NOT

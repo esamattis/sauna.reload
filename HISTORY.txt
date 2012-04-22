@@ -5,6 +5,9 @@ Changelog
 0.4.0 – unreleased
 ------------------
 
+- Added logging for successfully reloaded configuration files.
+  [datakurre]
+
 - Added support for reloading a ZEO-client.
   [datakurre]
 

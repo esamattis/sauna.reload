@@ -63,7 +63,7 @@ def startForkLoop(event):
     logger.info("We saved at least %s seconds from boot up time" %
         (time.time() - forkloop.boot_started))
 
-    logger.info("Packages marked for reload are listed in here: "
-        "http://127.0.0.1:%i/@@saunareload" % (zserver.port))
+    logger.info("Overview available at http://127.0.0.1:%i/@@saunareload" %
+        (zserver.port))
 
     forkloop.start()

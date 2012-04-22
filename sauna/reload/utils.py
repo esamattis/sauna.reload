@@ -22,8 +22,17 @@ class LoggerWrapper(object):
 
     def __init__(self, name):
         self.name = name
+        self._deferred = []
         self._deferredErrors = []
         self.setParentLogger()
+
+    def deferred(self, msg):
+        self._deferred.append(msg)
+
+    def logDeferred(self):
+        for msg in self._deferred:
+            self.info(msg)
+        self._deferred = []
 
     def deferredError(self, msg):
         self._deferredErrors.append(msg)

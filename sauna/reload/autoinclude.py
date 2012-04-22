@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Utilities for deferring autoinclude of selected paths"""
 # Copyright (c) 2011 University of Jyväskylä and Contributors.
 #
 # All Rights Reserved.
@@ -13,8 +14,6 @@
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 
-"""Utilities for deferring autoinclude of selected paths"""
-
 from pkg_resources import iter_entry_points
 
 from z3c.autoinclude.dependency import DependencyFinder
@@ -28,6 +27,7 @@ from z3c.autoinclude.utils import DistributionManager
 from z3c.autoinclude.utils import ZCMLInfo
 
 DEFERRED_TARGET = "sauna.reload"
+FAILED_TO_DEFER = []
 
 
 def defer_paths():
@@ -127,11 +127,28 @@ def check_deferring():
     cwd = os.getcwd() + os.path.sep
     for zcml in getattr(configuration_context, "_seen_files", ()):
         if zcml in reload_paths:
-            logger.deferredError("Failed to defer %s." % zcml.replace(cwd, "")
-                                 + " IT WILL NOT BE RELOADABLE.")
+            logger.deferredError("Cannot reload %s." % zcml.replace(cwd, ""))
+            FAILED_TO_DEFER.append(zcml)
 
 
 def include_deferred():
     """Autoinclude deferred packages"""
     import sauna.reload
     load_config("autoinclude.zcml", sauna.reload)
+
+    # Log the results
+    try:
+        from Zope2.App.zcml import _context as configuration_context
+        configuration_context  # pyflakes
+    except ImportError:
+        from Products.Five.zcml import _context as configuration_context
+
+    from sauna.reload import reload_paths
+    from sauna.reload.utils import logger
+
+    cwd = os.getcwd() + os.path.sep
+    for zcml in getattr(configuration_context, "_seen_files", ()):
+        if zcml in reload_paths and zcml not in FAILED_TO_DEFER:
+            if zcml.startswith(os.path.dirname(sauna.reload.__file__)):
+                continue
+            logger.deferred("Reloaded %s." % zcml.replace(cwd, ""))
