@@ -127,8 +127,8 @@ def check_deferring():
     cwd = os.getcwd() + os.path.sep
     for zcml in getattr(configuration_context, "_seen_files", ()):
         if zcml in reload_paths:
-            logger.deferedError("Failed to defer %s." % zcml.replace(cwd, "")
-                                + " IT WILL NOT BE RELOADABLE.")
+            logger.deferredError("Failed to defer %s." % zcml.replace(cwd, "")
+                                 + " IT WILL NOT BE RELOADABLE.")
 
 
 def include_deferred():
