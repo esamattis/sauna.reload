@@ -2,6 +2,10 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser">
 
+    <adapter factory=".adapters.ZODBDatabaseHooksAdapter" />
+    <adapter factory=".adapters.ZODBFileStorageDatabaseHooksAdapter" />
+    <adapter factory=".adapters.ZEOClientStorageDatabaseHooksAdapter" />
+
     <subscriber
         for="zope.processlifetime.IProcessStarting"
         handler=".eventhandlers.startForkLoop"

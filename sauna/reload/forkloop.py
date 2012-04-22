@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""The Fork Loop (tm)"""
 # Copyright (c) 2011 University of Jyväskylä and Contributors.
 #
 # All Rights Reserved.
@@ -25,7 +26,7 @@ from Signals.SignalHandler import SignalHandler
 registerHandler = SignalHandler.registerHandler
 
 from sauna.reload import autoinclude, fiveconfigure
-from sauna.reload.db import FileStorageIndex
+from sauna.reload.interfaces import IDatabaseHooks
 from sauna.reload.events import NewChildForked, NewChildIsReady
 from sauna.reload.utils import errline, logger
 
@@ -53,7 +54,7 @@ class ForkLoop(object):
         self.child_started = None
 
         self.cfg = None
-        self.storage_index = None
+        self.database = None
 
     def isChild(self):
         return self.child_pid == 0
@@ -89,8 +90,7 @@ class ForkLoop(object):
 
         # Must import here because we don't have DB on bootup yet
         from Globals import DB
-        # TODO: Fetch adapter with interface
-        self.storage_index = FileStorageIndex(DB.storage)
+        self.database = IDatabaseHooks(DB)
 
         # SIGCHLD tells us that child process has really died and we can spawn
         # new child
@@ -183,7 +183,7 @@ class ForkLoop(object):
         self.makeLockFile()
         self.makePidFile()
 
-        self.storage_index.restore()
+        self.database.resumeFromReload()
 
         notify(NewChildForked(self))
 
@@ -243,7 +243,7 @@ class ForkLoop(object):
         STEP 2 (child): Child is about to die. Fix DB.
         """
 
-        self.storage_index.save()
+        self.database.prepareForReload()
 
     def _waitChildToDieAndScheduleNew(self, signal=None, frame=None):
         """

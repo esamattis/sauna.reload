@@ -17,6 +17,24 @@
 from zope.interface import Interface, Attribute
 
 
+class IDatabaseHooks(Interface):
+    """
+    Provides storage-specific hooks to be called during the reload.
+    """
+
+    def prepareForReload():
+        """
+        Is called before the reload (before the process is killed)
+        to allow database connection be prepared for it.
+        """
+
+    def resumeFromReload():
+        """
+        Is called after the reload (after a new process has been spawned)
+        to allow database connection be restored.
+        """
+
+
 class INewChildForked(Interface):
     """
     Emited immediately after new process is forked. No development packages
@@ -29,7 +47,6 @@ class INewChildForked(Interface):
     """
 
     forkloop = Attribute("ForkLoop instance")
-
 
 
 class INewChildIsReady(Interface):

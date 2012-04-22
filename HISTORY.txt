@@ -5,6 +5,9 @@ Changelog
 0.4.0 – unreleased
 ------------------
 
+- Added support for reloading a ZEO-client.
+  [datakurre]
+
 - Added support to p.a.theming's plugins when p.a.theming is installed.
   [datakurre]
 

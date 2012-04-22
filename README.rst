@@ -314,8 +314,6 @@ Also because the product installation order is altered (by all the above) you
 may find some issue if your product does something funky on installation or at
 import time.
 
-Currently only FileStorage (ZODB) is supported.
-
 Please report any other issues at:
 https://github.com/collective/sauna.reload/issues.
 
