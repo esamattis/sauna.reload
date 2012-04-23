@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+0.4.1 – 2012-04-23
+------------------
+
+- Fixed BlogStorage-support (regression from 0.3.3).
+  [datakurre]
+
+
 0.4.0 – 2012-04-22
 ------------------
 

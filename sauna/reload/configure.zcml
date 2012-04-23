@@ -4,6 +4,7 @@
 
     <adapter factory=".adapters.ZODBDatabaseHooksAdapter" />
     <adapter factory=".adapters.ZODBFileStorageDatabaseHooksAdapter" />
+    <adapter factory=".adapters.ZODBBlobStorageDatabaseHooksAdapter" />
     <adapter factory=".adapters.ZEOClientStorageDatabaseHooksAdapter" />
 
     <subscriber
