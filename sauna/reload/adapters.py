@@ -53,7 +53,11 @@ class ZODBFileStorageDatabaseHooksAdapter(object):
     adapts(FileStorage)
 
     def __init__(self, context):
-        self.context = context
+        # Try to get the *real* FileStorage,
+        # because `context` may be just a BlobStorage-wrapper
+        # and it wraps FileStorage differently between
+        # ZODB3-3.9.5 and 3.10.x-series (eg. between Plone 4.0 and 4.1).
+        self.context = getattr(context, '_BlobStorage__storage', context)
 
     def prepareForReload(self):
         # Save ``Data.fs.index`` before dying
