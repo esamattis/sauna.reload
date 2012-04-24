@@ -36,14 +36,13 @@ class ZODBDatabaseHooksAdapter(object):
     adapts(IDatabase)
 
     def __init__(self, context):
-        self.context = context
-        self.adapter = IDatabaseHooks(context.storage)
+        self.context = IDatabaseHooks(context.storage)
 
     def prepareForReload(self):
-        return self.adapter.prepareForReload()
+        return self.context.prepareForReload()
 
     def resumeFromReload(self):
-        return self.adapter.resumeFromReload()
+        return self.context.resumeFromReload()
 
 
 class ZODBFileStorageDatabaseHooksAdapter(object):
