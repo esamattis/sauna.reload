@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+0.4.3 – 2012-04-25
+------------------
+
+- Updated README about ZEO-client support to be limited on Plone >= 4.1.
+
+
 0.4.2 – 2012-04-24
 ------------------
 
@@ -16,7 +22,7 @@ Changelog
   Closes https://github.com/epeli/sauna.reload/issues/11
   [datakurre]
 
-- Added support for reloading a ZEO-client.
+- Added support for reloading a ZEO-client on Plone >= 4.1.
   Fixes https://github.com/collective/sauna.reload/issues/1
   [datakurre]
 

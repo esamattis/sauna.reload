@@ -295,6 +295,9 @@ Events
 Limitations
 ===========
 
+``sauna.reload`` supports only Plone >= 4.0 for FileStorage and Plone >= 4.1
+for ZEO ClientStorage.
+
 ``sauna.reload`` has a major pitfall. Because it depends on deferring loading
 of packages to be watched and reloaded, also every package depending on those
 packages should be defined to be reloaded (in ``RELOAD_PATH``). And
