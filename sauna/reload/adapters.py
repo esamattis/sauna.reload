@@ -21,7 +21,6 @@ from zope.interface import implements
 from zope.component import adapts
 
 from ZODB.interfaces import IDatabase
-from ZODB.blob import BlobStorage
 from ZODB.FileStorage.FileStorage import FileStorage, read_index
 from ZEO.ClientStorage import ClientStorage
 
@@ -92,21 +91,6 @@ class ZODBFileStorageDatabaseHooksAdapter(object):
                 self.context._ts = TimeStamp(tid)
         finally:
             self.context._lock_release()
-
-
-class ZODBBlobStorageDatabaseHooksAdapter(ZODBFileStorageDatabaseHooksAdapter):
-    """
-    BlogStorage-proxied FileStorage-adapter
-    """
-    implements(IDatabaseHooks)
-    adapts(BlobStorage)
-
-    def __init__(self, context):
-        # Try to get the *real* FileStorage,
-        # because `context` may be just a BlobStorage-wrapper
-        # and it wraps FileStorage differently between
-        # ZODB3-3.9.5 and 3.10.x-series (eg. between Plone 4.0 and 4.1).
-        self.context = getattr(context, '_BlobStorage__storage', context)
 
 
 class ZEOClientStorageDatabaseHooksAdapter(object):

@@ -2,9 +2,16 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser">
 
+    <!-- Generic adapter to adapt both FileStorage and ZEO ClientStorage -->
     <adapter factory=".adapters.ZODBDatabaseHooksAdapter" />
+    <!-- FileStorage-adapter adapts to FileStorage on Plone >= 4.0
+         and also to BlobsStorage on Plone >= 4.1 -->
     <adapter factory=".adapters.ZODBFileStorageDatabaseHooksAdapter" />
-    <adapter factory=".adapters.ZODBBlobStorageDatabaseHooksAdapter" />
+    <!-- Re-registered adapter is required to adapt BlobStorage
+         on Plone >= 4.0.x, < 4.1 -->
+    <adapter factory=".adapters.ZODBFileStorageDatabaseHooksAdapter"
+             for="ZODB.blob.BlobStorage" />
+    <!-- ClientStorage-adapter adapts to ZEO ClientStorage on Plone >= 4.1 -->
     <adapter factory=".adapters.ZEOClientStorageDatabaseHooksAdapter" />
 
     <subscriber
