@@ -5,7 +5,7 @@ Changelog
 0.4.3 – 2012-04-25
 ------------------
 
-- Updated README about ZEO-client support to be limited on Plone >= 4.1.
+- Updated README about ZEO-client support to be limited to Plone >= 4.1.
 
 
 0.4.2 – 2012-04-24
